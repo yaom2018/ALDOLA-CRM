@@ -1,0 +1,131 @@
+<template>
+    <view class="my_counon">优惠券</view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/item.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '优惠券'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.my_detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 32rpx;
+  border-radius: 8rpx;
+  background-color: #f8f8f8;
+  .title {
+    margin-top: 25rpx;
+    font-size: 24rpx;
+    color: #333;
+    font-weight: 450;
+  }
+  // 数据
+  .message {
+    position: relative;
+    width: 100%;
+    margin: 60rpx 0;
+    padding: 0 30rpx;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    // 有礼
+    .decorousness {
+      position: absolute;
+      right: 77rpx;
+      top: -25rpx;
+    }
+    .item {
+      width: 208rpx;
+      height: 70rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      span:nth-child(1) {
+        color: #f5b682;
+        font-size: 30rpx;
+      }
+      span:nth-child(2) {
+        color: #999999;
+        font-size: 22rpx;
+      }
+      .center {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        border-left: 2rpx solid #e6e6e6;
+        border-right: 2rpx solid #e6e6e6;
+        box-sizing: border-box;
+      }
+    }
+  }
+  // 二维码
+  .erweima {
+    width: 390rpx;
+    height: 390rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    .erweima_item {
+      width: 340rpx;
+      height: 340rpx;
+      background-color: pink;
+    }
+  }
+  // 支付
+  .pay {
+    display: flex;
+    flex-direction: column;
+    span {
+      width: 240rpx;
+      height: 50rpx;
+      color: #fff;
+      text-align: center;
+      line-height: 50rpx;
+      font-size: 24rpx;
+      background-color: #d4b974;
+    }
+    van-icon {
+      color: #00943b;
+      font-size: 30rpx;
+      margin-left: 15rpx;
+    }
+    .balance {
+      margin: 3rpx 0 9rpx 0;
+      border-radius: 4rpx;
+    }
+    .wx {
+      margin-bottom: 20rpx;
+      border-radius: 4rpx;
+    }
+    .other {
+      margin-bottom: 30rpx;
+    }
+  }
+  //   优惠活动
+  .sale {
+    width: 660rpx;
+    height: 100rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8rpx 8rpx 0 0;
+    background-color: #f5b682;
+    span {
+      color: #999;
+      font-size: 24rpx;
+    }
+  }
+}
+</style>

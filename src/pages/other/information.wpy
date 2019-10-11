@@ -1,0 +1,221 @@
+<template>
+    <view class="content">
+        <view class="infor">
+            <view class="inforItem">
+                <span class="title">姓名</span>
+                <input type="text" placeholder="请输入" value="{{name}}" bindinput="inputName">
+                <van-icon name="arrow" class="icon"/>
+            </view>
+            <view class="inforItem">
+                <span class="title">性别</span>
+                <input
+                    type="text"
+                    placeholder="请选择"
+                    value="{{gender}}"
+                    disabled="true"
+                    bindinput="inputGender"
+                    @tap="showGender"
+                >
+                <van-icon name="arrow" class="icon"/>
+            </view>
+            <view class="inforItem">
+                <span class="title">手机号</span>
+                <input type="number" placeholder="请输入" value="{{phone}}" bindinput="inputPhone">
+                <van-icon name="arrow" class="icon"/>
+            </view>
+            <!-- <view class="inforItem">
+                <span class="title">身份证</span>
+                <input type="text" placeholder="请输入" value="{{identity}}" bindinput="inpuTidentity">
+                <van-icon name="arrow" class="icon"/>
+            </view>-->
+            <view class="inforItem">
+                <span class="title">生日</span>
+                <picker
+                    class="pickerBirthday"
+                    mode="date"
+                    value="{{birDate}}"
+                    start="1930-01-01"
+                    end="2035-01-01"
+                    bindchange="bindBirthdayChange"
+                >
+                    <view>
+                        <input  placeholder="请选择" value="{{birDate}}" disabled="{{outdate}}">
+                    </view>
+                </picker>
+                <van-icon name="arrow" class="icon"/>
+            </view>
+            <!-- <view class="inforItem">
+                <span class="title">地址</span>
+                
+                <van-icon name="arrow" class="icon"/>
+            </view> -->
+            <!-- 自定义字段区域 -->
+            <!-- <view class="inforItem"  wx:for="{{customData}}" wx:for-index="idx" wx:key="idx">
+                <span class="title">{{item.fieldname}}</span> -->
+                <!-- <picker
+                    mode="region"
+                    class="pickerRegion"
+                    bindchange="bindCustomDataChange"
+                    value="{{region}}"
+                    custom-item="全部"
+                    wx:if="{{item.fieldname=='地址'}}"
+                >
+                    <view class="picker">
+                        <input type="text" placeholder="请选择" value="{{item.oldfieldval}}">
+                    </view>
+                </picker> -->
+                <!-- <input type="text"  placeholder="请输入" id="{{idx}}" value="{{item.fieldval }}" bindinput="customDataItem">
+                
+                <van-icon name="arrow" class="icon"/>
+            </view> -->
+
+
+
+            <!-- <view class="inforItem">
+                <span class="title">验证码</span>
+                <input
+                    type="text"
+                    bindinput="inputCode"
+                    placeholder="请输入验证码"
+                    style="text-align: center"
+                    value="{{code}}"
+                >
+                <button
+                    class="code"
+                    bindtap="getCode"
+                    hover-class="btn-hover"
+                    disabled="{{flagbtn}}"
+                >
+                    {{codeText}}
+                    <van-toast id="van-toast"/>
+                </button>
+            </view> -->
+            <view class="inforBtn">
+                <button class="btn" bindtap="subMessUser">提交</button>
+            </view>
+        </view>
+        <!-- 性别弹框 -->
+        <van-popup show="{{ showGender }}" position="bottom">
+            <view class="showGender">
+                <van-picker
+                    show-toolbar
+                    title="性别"
+                    columns="{{ genderPicker }}"
+                    bind:cancel="onCancelGenter"
+                    bind:confirm="pinkerGenter"
+                />
+            </view>
+        </van-popup>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/information.js'
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '完善信息'
+  }
+  mixins = [mix]
+}
+</script>
+<style lang="less">
+button::after {
+  border: none;
+}
+
+button {
+  border-radius: 0;
+  background-color: #fff;
+}
+.btn-hover {
+  color: #fff;
+  background-color: #fff !important;
+}
+button[disabled] {
+  background-color: #fff!important;
+}
+.infor {
+  margin-top: 10rpx;
+  box-sizing: border-box;
+  border-top: 2rpx solid #f0f0f0;
+  width: 100%;
+  padding: 0 20rpx;
+  .inforItem {
+    display: flex;
+    box-sizing: border-box;
+    width: 100%;
+    padding: 25rpx 0;
+    border-bottom: 2rpx solid #f0f0f0;
+    .title {
+      line-height: 60rpx;
+      font-size: 28rpx;
+      color: #030303;
+    }
+    input {
+      flex: 1;
+      height: 60rpx;
+      color: #030303;
+      box-sizing: border-box;
+      display: inline-block;
+      text-align: end;
+      font-size: 28rpx;
+      margin-right: 20rpx;
+    }
+    .icon {
+      font-size: 50rpx;
+      font-weight: 700;
+      color: #949494;
+    }
+
+    .code {
+      width: 200rpx;
+      height: 75rpx;
+      font-size: 28rpx;
+      border-left: 2rpx solid #9a9a9a;
+      // padding: 0 40rpx 10rpx;
+      color: #7a6736;
+    }
+  }
+}
+.content {
+  position: relative;
+  .showGender {
+    width: 750rpx;
+    //   position: absolute;
+    //   left: 0;
+    //   bottom: 10px;
+  }
+  .showBirDate {
+    width: 750rpx;
+    //   position: absolute;
+    //   left: 0;
+    //   bottom: 10px;
+  }
+  .pickerBirthday,
+  .pickerRegion,
+  .pickerEducation {
+    flex: 1;
+    view {
+      padding-right: 20rpx;
+    }
+    input {
+      width: 100%;
+    }
+  }
+  .inforBtn {
+    margin-top: 46rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .btn {
+      width: 320rpx;
+      height: 100rpx;
+      background-color: #D4B973;
+      color: #fff;
+      font-size: 40rpx;
+      border-radius: 100rpx;
+    }
+  }
+}
+</style>

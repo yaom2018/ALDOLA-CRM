@@ -1,0 +1,316 @@
+<template>
+    <view class="coupon">
+        <van-tabs active="{{ active }}" bind:change="onChange" color="#07C160" line-width="100">
+            <van-tab title="未使用({{uncounon.length}})">
+                <!-- 输入框 -->
+                <view class="convert">
+                    <span>
+                        <van-cell-group>
+                            <van-field
+                                value="{{ value }}"
+                                placeholder="请输入兑换码"
+                                border="{{ false }}"
+                                bind:change="onChange"
+                            />
+                        </van-cell-group>
+                    </span>
+                    <span>兑换</span>
+                </view>
+                <!-- 卡券 -->
+                <!-- 暂无卡券>-->
+                <view class="nocoupon" wx:if="{{uncounon.length<1}}">
+                    <van-icon name="coupon" class="nocoupon-icon"/>
+                    <view class="nocoupon-title">暂无优惠券</view>
+                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+                </view>
+                <!-- 卡券-->
+                <block wx:else>
+                    <view 
+                    class="card" 
+                    wx:for="{{uncounon}}" 
+                    wx:for-item="item"
+                    wx:for-index="i"
+                    wx:key="item.id"
+                    id="{{item.id}}"
+                    data-presentcoupon="{{item}}"
+                    @tap="tocounonDetail">
+                        <view class="label">使用</view>
+                        <view class="left">
+                            <span></span>
+                            <span></span>
+                        </view>
+                        <view class="right">
+                            <view class="title">线上门店通用</view>
+                            <view class="content">
+                                <view class="content_left">
+                                    <span>￥</span>
+                                    <span>{{item.mmoney}}</span>
+                                </view>
+                                <view class="content_right">
+                                    <span>{{item.cname}}</span>
+                                    <span>满{{item.sum}}元可用</span>
+                                    <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
+                                </view>
+                            </view>
+                            <view class="explain">*部分特价商品不可用</view>
+                        </view>
+                    </view>
+                </block>
+            </van-tab>
+            <van-tab title="已使用({{bycounon.length}})">
+                <!-- 输入框 -->
+                <view class="convert">
+                    <span>
+                        <van-cell-group>
+                            <van-field
+                                value="{{ value }}"
+                                placeholder="请输入兑换码"
+                                border="{{ false }}"
+                                bind:change="onChange"
+                            />
+                        </van-cell-group>
+                    </span>
+                    <span>兑换</span>
+                </view>
+                <!-- 卡券 -->
+                <!-- 暂无卡券>-->
+                <view class="nocoupon" wx:if="{{bycounon.length<1}}">
+                    <van-icon name="coupon" class="nocoupon-icon"/>
+                    <view class="nocoupon-title">暂无优惠券</view>
+                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+                </view>
+                <!-- 卡券-->
+                <block wx-else>
+                    <view class="card" wx:for="{{bycounon}}" wx:key="*this">
+                    <view class="label">使用</view>
+                    <view class="left">
+                        <span></span>
+                        <span></span>
+                    </view>
+                    <view class="right">
+                        <view class="title">线上门店通用</view>
+                        <view class="content">
+                            <view class="content_left">
+                                <span>￥</span>
+                                <span>{{item.mmoney}}</span>
+                            </view>
+                            <view class="content_right">
+                                <span>{{item.cname}}</span>
+                                <span>满{{item.sum}}元可用</span>
+                                <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
+                            </view>
+                        </view>
+                        <view class="explain">*部分特价商品不可用</view>
+                    </view>
+                </view>
+                </block>
+            </van-tab>
+            <van-tab title="已过期({{outcounon.length}})">
+                <!-- 输入框 -->
+                <view class="convert">
+                    <span>
+                        <van-cell-group>
+                            <van-field
+                                value="{{ value }}"
+                                placeholder="请输入兑换码"
+                                border="{{ false }}"
+                                bind:change="onChange"
+                            />
+                        </van-cell-group>
+                    </span>
+                    <span>兑换</span>
+                </view>
+                <!-- 卡券 -->
+                <!-- 暂无卡券>-->
+                <view class="nocoupon" wx:if="{{outcounon.length<1}}">
+                    <van-icon name="coupon" class="nocoupon-icon"/>
+                    <view class="nocoupon-title">暂无优惠券</view>
+                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+                </view>
+                <!-- 卡券-->
+                <block wx-else>
+                    <view class="card" wx:for="{{outcounon}}" wx:key="*this">
+                    <view class="label">使用</view>
+                    <view class="left">
+                        <span></span>
+                        <span></span>
+                    </view>
+                    <view class="right">
+                        <view class="title">线上门店通用</view>
+                        <view class="content">
+                            <view class="content_left">
+                                <span>￥</span>
+                                <span>{{item.mmoney}}</span>
+                            </view>
+                            <view class="content_right">
+                                <span>{{item.cname}}</span>
+                                <span>满{{item.sum}}元可用</span>
+                                <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
+                            </view>
+                        </view>
+                        <view class="explain">*部分特价商品不可用</view>
+                    </view>
+                </view>
+                </block>
+            </van-tab>
+        </van-tabs>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/mycounon.js'
+export default class Home extends wepy.page {
+  config = {
+    navigationBarTitleText: '我的优惠券'
+  }
+  mixins = [mix]
+}
+</script>
+<style lang="less">
+/* pages/main/mycoupon.wxss */
+page {
+  background-color: #f7f7f7;
+}
+.convert {
+  width: 100%;
+  padding: 20rpx 0 20rpx 50rpx;
+  display: flex;
+
+  background-color: #fff;
+  span:nth-child(1) {
+    width: 510rpx;
+    height: 40rpx;
+
+    .van-cell {
+      padding: 0;
+      padding-left: 8rpx;
+      font-size: 20rpx;
+      color: #666666;
+      background-color: #f6f6f6;
+    }
+  }
+  span:nth-child(2) {
+    width: 80rpx;
+    height: 40rpx;
+    font-size: 26rpx;
+    color: #666;
+    text-align: center;
+  }
+}
+// 暂无优惠券
+.nocoupon {
+  margin: 30rpx 0;
+  padding: 0 100rpx;
+  text-align: center;
+  .nocoupon-icon {
+    font-size: 320rpx;
+    color: #bfbfbf;
+  }
+  .nocoupon-title {
+    color: #636363;
+    font-size: 28rpx;
+  }
+  .nocoupon-btn {
+    margin: 0 auto;
+    margin-top: 20rpx;
+    width: 220rpx;
+    border-radius: 10rpx;
+    height: 60rpx;
+    color: #fff;
+    line-height: 60rpx;
+    font-size: 28rpx;
+    background-color: #65b1f8;
+  }
+}
+.card {
+  position: relative;
+  width: 545rpx;
+  height: 190rpx;
+  display: flex;
+  margin: 40rpx 0 0 80rpx;
+  border-radius: 8rpx;
+  overflow: hidden;
+  background-color: #fff;
+  .label {
+    position: absolute;
+    top: 10rpx;
+    right: 30rpx;
+    font-size: 16rpx;
+    padding: 0rpx 10rpx;
+    color: #fbbe65;
+    border-radius: 22rpx;
+    height: 22rpx;
+    line-height: 22rpx;
+    border: 2rpx solid #fbbe65;
+  }
+  .left {
+    width: 20rpx;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: flex-end;
+    background-color: #fdae2d;
+    span {
+      width: 10rpx;
+      height: 10rpx;
+      background-color: #fff;
+    }
+    span:nth-child(1) {
+      border-radius: 0 0 0 8rpx;
+    }
+    span:nth-child(2) {
+      border-radius: 8rpx 0 0 0;
+    }
+  }
+  .right {
+    .title {
+      margin: 16rpx 0 0 34rpx;
+      font-size: 16rpx;
+      color: #333;
+    }
+    .content {
+      display: flex;
+      justify-content: flex-start;
+      .content_left {
+        // width: 90rpx;
+        // height: 70rpx;
+        margin-right:10rpx;
+        span:nth-child(1) {
+          font-size: 32rpx;
+          color: #333;
+        }
+        span:nth-child(2) {
+          font-size: 80rpx;
+          font-family: '黑体';
+          color: #333;
+        }
+      }
+      .content_right {
+        display: flex;
+        flex-direction: column;
+        span:nth-child(1) {
+          font-size: 24rpx;
+          line-height: 50rpx;
+          color: #999;
+        }
+        span:nth-child(2) {
+          font-size: 18rpx;
+          color: #999;
+          margin-bottom: 6rpx;
+        }
+        span:nth-child(3) {
+          font-size: 14rpx;
+          color: #999;
+        }
+      }
+    }
+    .explain {
+      margin: 18rpx 0 0 21rpx;
+      font-size: 16rpx;
+      color: #999;
+    }
+  }
+}
+</style>

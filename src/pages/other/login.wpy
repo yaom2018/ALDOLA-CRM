@@ -1,0 +1,133 @@
+<template>
+    <view class="login_content">
+        <view class="content_top">
+            <span class="logo">
+                <image style="width: 170rpx; height: 80rpx" src="/assets/images/logo.png"/>
+            </span>
+            <span class="title">雅黛丽会员管理</span>
+        </view>
+        <view class="content_bottom">
+            <view class="phonebtn">
+                <button
+                    wx:if="{{messageshow}}"
+                    class="login"
+                    open-type="getUserInfo"
+                    bindgetuserinfo="getUserInfo"
+                    hover-class="btn-hover"
+                >
+                    <!-- <image style="width: 28rpx; height: 58rpx" src="/assets/images/phoneicon.jpg"/> -->
+                    <span class="btntitle">获取用户信息</span>
+                </button>
+                <button
+                    wx:elif="{{phonebtnshow}}"
+                    class="login"
+                    open-type="getPhoneNumber"
+                    bindgetphonenumber="getPhoneNumber"
+                    hover-class="btn-hover"
+                >
+                    <!-- <image style="width: 28rpx; height: 58rpx" src="/assets/images/phoneicon.jpg"/> -->
+                    <span class="btntitle">手机号登录</span>
+                </button>
+                <view class="consent">
+                    <span class="left">点击注册登录表示您同意</span>
+                    <span class="right" @tap="toTerms">《雅黛丽用户服务条款》</span>
+                </view>
+            </view>
+        </view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/login.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '授权登录'
+  }
+  components = {
+    // phonebtn,
+    // messagebtn
+  }
+  onLoad() {}
+  methods = {}
+}
+</script>
+<style lang="less">
+.login_content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .content_top {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-bottom: 255rpx;
+    .logo {
+      width: 185rpx;
+      height: 185rpx;
+      border: 2rpx solid #444;
+      margin-top: 27rpx;
+      border-radius: 185rpx;
+    //   text-align: center;
+    //   line-height: 185rpx;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .title {
+      margin-top: 52rpx;
+      font-size: 34rpx;
+      color: #333;
+    }
+  }
+}
+button::after {
+  border: none;
+}
+
+button {
+  border-radius: 0;
+  background-color: #fff;
+}
+//按下时的样式
+.btn-hover {
+  color: #fff;
+  background-color: #fff !important;
+}
+.phonebtn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  .login {
+    display: flex;
+    justify-content: center;
+    width: 470rpx;
+    height: 58rpx;
+    border: 2rpx solid #07c160;
+    border-radius: 5rpx;
+    text-align: center;
+    image {
+      //   vertical-align: middle;
+      margin-right: 30rpx;
+    }
+    .btntitle {
+      height: 58rpx;
+      line-height: 58rpx;
+      font-size: 22rpx;
+      color: #0cb908;
+    }
+  }
+  .consent {
+    margin-top: 28rpx;
+    .left {
+      font-size: 18rpx;
+      color: #666;
+    }
+    .right {
+      font-size: 18rpx;
+      color: #07c160;
+    }
+  }
+}
+</style>

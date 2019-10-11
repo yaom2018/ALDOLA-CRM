@@ -1,0 +1,216 @@
+<style lang="less">
+.container {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+}
+</style>
+
+<script>
+import wepy from 'wepy'
+import '@/baseApi.js'
+import 'wepy-async-function'
+
+export default class extends wepy.app {
+  config = {
+    pages: [
+      'pages/other/login',
+      'pages/tabs/member',
+      'pages/tabs/coupon',
+      'pages/other/mydetail',
+      'pages/other/mycounon',
+      'pages/other/coupondetail',
+      'pages/other/search',
+      'pages/other/information'
+    ],
+    permission: {
+      'scope.userLocation': {
+        desc: '位置信息用于获取最近线下门店'
+      }
+    },
+    window: {
+      backgroundTextStyle: 'light',
+      navigationBarBackgroundColor: '#fff',
+      navigationBarTitleText: 'WeChat',
+      navigationBarTextStyle: 'black'
+    },
+    navigateToMiniProgramAppIdList: ['wx627972fa7b9597ee'],
+    tabBar: {
+      // 选中的文本颜色
+      selectedColor: '#D4B973',
+      color: '#ccc',
+      // tabBar 的列表
+      list: [
+        {
+          // 页面路径
+          pagePath: 'pages/tabs/coupon',
+          // 显示的文本
+          text: '活动',
+          // 默认图标
+          iconPath: '/assets/icons/couponlingqu.png',
+          // 选中图标
+          selectedIconPath: '/assets/icons/couponlingqu_.png'
+        },
+        {
+          // 页面路径
+          pagePath: 'pages/tabs/member',
+          // 显示的文本
+          text: '会员中心',
+          // 默认图标
+          iconPath: '/assets/icons/home.png',
+          // 选中图标
+          selectedIconPath: '/assets/icons/home_.png'
+        }
+      ]
+    },
+    usingComponents: {
+      'van-icon': './assets/vant/icon/index',
+      'van-tab': './assets/vant/tab/index',
+      'van-tabs': './assets/vant/tabs/index',
+      'van-field': './assets/vant/field/index',
+      'van-overlay': './assets/vant/overlay/index',
+      'van-button': './assets/vant/button/index',
+      'van-picker': './assets/vant/picker/index',
+      'van-popup': './assets/vant/popup/index',
+    }
+  }
+
+  globalData = {
+    userInfo: null,
+    vipInfo: null,
+    eid: '',
+    openid: '',
+    unionid: '',
+    sessionKey: '',
+    phone: '',
+    uncouponnum: 0,
+    showgift: false // 礼包弹框
+  }
+
+  constructor() {
+    super()
+    this.use('requestfix')
+    // 通过下面这一行代码，可以为异步的API，
+    // 开启Promise功能，这样，异步API调用的结果，返回值是Promise对象
+    this.use('promisify')
+  }
+
+  onLaunch() {
+    // this.getUserInfo()
+  }
+  // 获取已领取的优惠券数量
+  async getcounon(types) {
+    // 发请求
+    let params = {
+      eid: this.globalData.vipInfo.eid,
+      vipid: this.globalData.vipInfo.vid,
+      ctype: types
+    }
+    console.log(params, 99)
+    const { data: res } = await wepy.post('/coupon/getmycoupon', params)
+    console.log(res, '未使用的优惠券全局')
+    if (!res.statu) {
+      console.log('暂无优惠券')
+
+      //   wepy.Toast('获取优惠券失败')
+      return
+    }
+
+    if (res.rows) {
+      this.globalData.uncouponnum = res.rows.length
+    }
+
+    // 获取到结果回调函数
+    if (this.getcounonCallback) {
+      this.getcounonCallback(res)
+    }
+    if (this.getcounonCallback2) {
+      this.getcounonCallback2(res)
+    }
+  }
+  //   getUserInfo() {
+  //     //   登录
+  //     wx.login({
+  //       success: async res => {
+  //         console.log(res, 1)
+  //         // 发送 res.code 到后台换取 openId, sessionKey, unionId
+  //         var _this = this
+  //         let params = {
+  //           eid: _this.globalData.eid,
+  //           code: res.code
+  //         }
+  //         const { data: resuser } = await wepy.post(
+  //           '/session/getsessionkey',
+  //           params
+  //         )
+  //         console.log(resuser, 2)
+  //         if (!resuser.statu) return wepy.baseToast('登录失败')
+  //         _this.globalData.openid = resuser.t.openid
+  //         _this.globalData.unionid = resuser.t.unionid
+  //         _this.globalData.sessionKey = resuser.t.session_key
+  //         var userInfo = _this.globalData.userInfo
+  //         if (userInfo) {
+  //           console.log(userInfo, 3)
+
+  //             this.getVipInfo(userInfo, _this)
+  //         } else {
+  //             console.log(1111);
+
+  //           _this.userInfoReadyCallback = res => {
+  //             userInfo = res.userInfo
+  //             console.log(userInfo, 4)
+  //             this.getVipInfo(userInfo, _this)
+  //           }
+  //         }
+  //       }
+  //     })
+  //     // 获取用户信息
+  //     wx.getSetting({
+  //       success: res => {
+  //         console.log(res, 777)
+  //         if (res.authSetting['scope.userInfo']) {
+  //           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
+  //           wx.getUserInfo({
+  //             success: res => {
+  //               var userInfo = res.userInfo
+  //               // 可以将 res 发送给后台解码出 unionId
+  //               this.globalData.userInfo = userInfo
+  //               // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
+  //               // 所以此处加入 callback 以防止这种情况
+  //               if (this.userInfoReadyCallback) {
+  //                 this.userInfoReadyCallback(res)
+  //               }
+  //             }
+  //           })
+  //         }
+  //       }
+  //     })
+  //   }
+  //   获取会员信息
+  //   async getVipInfo(userInfo, _this) {
+  //     let parent = {
+  //       eid: _this.globalData.eid,
+  //       usOpenid: _this.globalData.openid,
+  //       usUnionid: _this.globalData.unionid,
+  //       usNickname: userInfo.nickName,
+  //       usSex: userInfo.gender,
+  //       usLanguage: userInfo.language,
+  //       usCity: userInfo.city,
+  //       usProvince: userInfo.province,
+  //       usCountry: userInfo.country,
+  //       usHeadimgurl: userInfo.avatarUrl,
+  //       usSubscribeTime: Date.parse(new Date()) / 1000
+  //     }
+  //     const { data: res } = await wepy.post('/session/getparam', parent)
+  //     // console.log(res, 888)
+  //     _this.globalData.vipInfo = res.t
+  //     // console.log(99)
+  //     if (_this.vipInfoReadyCallback) {
+  //       _this.vipInfoReadyCallback(res)
+  //     }
+  //   }
+}
+</script>

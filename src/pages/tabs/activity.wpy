@@ -1,0 +1,152 @@
+<template>
+    <view class="activity">
+        <view class="location">
+            <van-icon name="location"/>
+            <span class="myaddress" @tap="tapgetLocation">{{address?address:'请选择位置……'}}</span>
+        </view>
+        <view class="store">
+            <span class="input">{{shopAddress}}</span>
+            <view class="store_right" @tap="tosearch">
+                <span class="select">选择其他门店</span>
+                <van-icon name="search"/>
+            </view>
+        </view>
+        <!-- 离我最近 -->
+        <view class="recently">
+            <view class="centent">
+                <image style="width: 100%; height: 160rpx;" src="/assets/images/huodong_01.png">
+            </view>
+            <view class="shop">
+                <span>发货门店 :</span>
+                <span>东西湖店</span>
+            </view>
+            <span class="icon">离我最近</span>
+        </view>
+        <!-- 人气爆棚 -->
+        <view class="recently">
+            <view class="centent">
+                <image style="width: 100%; height: 160rpx;" src="/assets/images/huodong_01.png">
+            </view>
+            <view class="shop">
+                <span>发货门店 :</span>
+                <span>东西湖店</span>
+            </view>
+            <span class="icon">人气爆棚</span>
+        </view>
+        <!-- 超值优惠 -->
+        <view class="recently">
+            <view class="centent">
+                <image style="width: 100%; height: 160rpx;" src="/assets/images/huodong_01.png">
+            </view>
+            <view class="shop">
+                <span>发货门店 :</span>
+                <span>东西湖店</span>
+            </view>
+            <span class="icon">超值优惠</span>
+        </view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/tabs/activity.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '活动',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.location {
+  height: 55rpx;
+  line-height: 55rpx;
+  padding-left: 100rpx;
+  font-size: 28rpx;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  .van-icon {
+    height: 55rpx;
+    line-height: 55rpx;
+    color: #333;
+  }
+  span {
+    height: 55rpx;
+    // line-height: 55rpx;
+    margin-left: 25rpx;
+    color: #333;
+  }
+  .myaddress {
+    display: inline-block;
+    width: 200rpx;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+}
+.store {
+  height: 50rpx;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-bottom: 40rpx;
+  .input {
+    width: 300rpx;
+    font-size: 20rpx;
+    text-align: center;
+    display: inline-block;
+    padding: 0 36rpx;
+    border-radius: 40rpx;
+    height: 40rpx;
+    line-height: 40rpx;
+    border: 2rpx solid #ccc;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
+  .store_right {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .select {
+      padding-right: 60rpx;
+      font-size: 20rpx;
+      color: #888;
+    }
+    van-icon {
+      font-size: 40rpx;
+      color: #333;
+    }
+  }
+}
+.recently {
+  position: relative;
+  padding-top: 50rpx;
+
+  .centent {
+    width: 100%;
+    height: 160rpx;
+    background-color: #ccc;
+  }
+  .shop {
+    padding-left: 25rpx;
+    height: 55rpx;
+    line-height: 55rpx;
+    background-color: #eee;
+  }
+  .icon {
+    position: absolute;
+    right: 30rpx;
+    top: 20rpx;
+    padding: 0 20rpx;
+    line-height: 60rpx;
+    border-radius: 60rpx;
+    height: 60rpx;
+    background-color: #ff8029;
+  }
+}
+</style>

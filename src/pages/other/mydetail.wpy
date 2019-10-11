@@ -1,0 +1,193 @@
+<template>
+    <view class="my_detail">
+        <!-- 标题 -->
+        <view class="title">
+            <span>{{vipInfo.qpname}}:</span>
+            <span>{{vipInfo.phone}}</span>
+        </view>
+        <!-- 数据 -->
+        <view class="message">
+            <view class="item">
+                <span>{{vipInfo.actualpoint}}</span>
+                <span>积分</span>
+            </view>
+            <view class="item"  @tap="toCounon">
+                <span class="center">{{uncouponnum}}</span>
+                <span>优惠券</span>
+            </view>
+            <view class="item">
+                <span>{{vipInfo.actualmoeny}}</span>
+                <span>钱包·充值</span>
+            </view>
+            <!-- 有礼 -->
+            <view class="decorousness">
+                <image style="width: 54rpx; height: 28rpx;" src="/assets/images/decorousness.png">
+            </view>
+        </view>
+        <!-- 二维码 -->
+        <view class="erweima">
+            <view class="qrcode">
+                <canvas canvas-id="qrcode"/>
+            </view>
+        </view>
+        <view class="pay">
+            <!-- <span class="balance">余额支付 (9.7折)</span> -->
+            <!-- <span class="wx"> -->
+                <!-- <van-icon name="wechat"/>微信支付 -->
+            <!-- </span> -->
+            <!-- <span class="other">其他方式支付</span> -->
+        </view>
+        <!-- 优惠活动 -->
+        <view class="sale">
+            <span>会员二维码展示</span>
+            <!-- <span>充值多少送15元</span> -->
+            <!-- <span>充值多少送35元</span> -->
+        </view>
+        <view class="back" @tap="toback">返回个人中心</view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/mydetail.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '会员详情'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.my_detail {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin: 32rpx;
+  border-radius: 8rpx;
+  background-color: #f8f8f8;
+  .title {
+    margin-top: 25rpx;
+    font-size: 24rpx;
+    color: #333;
+    font-weight: 450;
+  }
+  // 数据
+  .message {
+    position: relative;
+    width: 100%;
+    margin: 60rpx 0;
+    padding: 0 30rpx;
+    box-sizing: border-box;
+    display: flex;
+    justify-content: space-between;
+    // 有礼
+    .decorousness {
+      position: absolute;
+      right: 77rpx;
+      top: -25rpx;
+    }
+    .item {
+      width: 208rpx;
+      height: 70rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      span:nth-child(1) {
+        color: #f5b682;
+        font-size: 30rpx;
+      }
+      span:nth-child(2) {
+        color: #999999;
+        font-size: 22rpx;
+      }
+      .center {
+        display: inline-block;
+        width: 100%;
+        text-align: center;
+        border-left: 2rpx solid #e6e6e6;
+        border-right: 2rpx solid #e6e6e6;
+        box-sizing: border-box;
+      }
+    }
+  }
+  // 二维码
+  .erweima {
+    width: 390rpx;
+    height: 390rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    .qrcode {
+      height: 450rpx;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    .qrcode > canvas {
+      width: 450rpx;
+      height: 450rpx;
+    }
+  }
+  // 支付
+  .pay {
+    display: flex;
+    flex-direction: column;
+    span {
+      width: 240rpx;
+      height: 50rpx;
+      color: #fff;
+      text-align: center;
+      line-height: 50rpx;
+      font-size: 24rpx;
+      background-color: #d4b974;
+    }
+    van-icon {
+      color: #00943b;
+      font-size: 30rpx;
+      margin-left: 15rpx;
+    }
+    .balance {
+      margin: 3rpx 0 9rpx 0;
+      border-radius: 4rpx;
+    }
+    .wx {
+      margin-bottom: 20rpx;
+      border-radius: 4rpx;
+    }
+    .other {
+      margin-bottom: 30rpx;
+    }
+  }
+  //   优惠活动
+  .sale {
+    width: 660rpx;
+    height: 100rpx;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    border-radius: 8rpx 8rpx 0 0;
+    background-color: #f5b682;
+    span {
+      color: #999;
+      font-size: 24rpx;
+    }
+  }
+//   返回个人中心
+    .back {
+        margin-top: 50rpx;
+        margin-bottom: 10rpx;
+        height: 60rpx;
+        line-height: 60rpx;
+        padding: 0 20rpx;
+        border-radius: 10rpx;
+         background-color: #d4b974;
+    }
+}
+</style>

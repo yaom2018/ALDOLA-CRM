@@ -1,0 +1,148 @@
+<template>
+    <view class="couponDetail">
+        <view class="top">
+            
+            <view class="top_coupon">
+                <view class="top_coupon_centent">
+                    <view class="detail_text">
+                        <view class="price">
+                            <span>￥</span>
+                            <span>{{coupon.mmoney}}</span>
+                        </view>
+                        <span class="common">通用券</span>
+                    </view>
+                    <image
+                    class="couponbgtop"
+                    style="width: 197rpx; height: 151rpx;"
+                    src="/assets/images/couitemicon.png"
+                    >
+                </view>
+                <span>{{coupon.cname}}</span>
+                <span>满{{coupon.sum}}元可用</span>
+                <span>通用券，小程序门店结算均可使用</span>
+                <view class="qrcode">
+                    <canvas canvas-id="qrcode"/>
+                </view>
+            </view>
+            <image
+                class="couponbg"
+                style="width: 546rpx; height: 587rpx;"
+                src="/assets/images/couponbg.png"
+            >
+            
+        </view>
+        <view class="bottom" @tap="toMydetail">出示会员码</view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/coupondetail.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '优惠券详情'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+page {
+    background-color: #f2f2f2;
+}
+
+.qrcode {
+//   width: 150rpx;
+//   height: 150rpx;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.qrcode > canvas {
+  width: 200rpx;
+  height: 200rpx;
+}
+.couponbg {
+    margin-top: 46rpx;
+}
+.couponDetail {
+    display: flex;
+    flex-direction: column;
+    // justify-content: flex-start; 
+    align-items: center;
+    .top {
+        position: relative;
+        
+        .top_coupon_centent {
+            position: relative;
+            margin-top: 46rpx;
+            .detail_text {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                top: 0;
+                left: 0;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                .price {
+                    span:nth-child(1) {
+                        font-size: 20rpx;
+                        color: #fff;
+                    }
+                    span:nth-child(2) {
+                        font-size: 60rpx;
+                        color: #fff;
+                    }
+                }
+                .common {
+                    font-size: 20rpx;
+                        color: #fff;
+                }
+            }
+        }
+        .top_coupon {
+            position: absolute;
+            left: 0;
+            top: 0;
+            margin-top: 46rpx;
+            width: 546rpx; 
+            height: 587rpx;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            span:nth-child(2) {
+                font-size: 24rpx;
+                color: #333;
+                line-height: 54rpx;
+            }
+            span:nth-child(3) {
+                font-size: 18rpx;
+                color: #666;
+                margin-bottom: 60rpx;
+            }
+            span:nth-child(4) {
+                font-size: 18rpx;
+                color: #666;
+                margin-bottom: 24rpx;
+            }
+        }
+    }
+    .bottom {
+        margin-top: 130rpx;
+        padding: 0 38rpx;
+        font-size: 30rpx;
+        font-weight: 500;
+        height: 60rpx;
+        color: #fff;
+        border-radius: 8rpx;
+        text-align: center;
+        line-height: 60rpx;
+        background-color: #D4B974;
+    }
+}
+</style>

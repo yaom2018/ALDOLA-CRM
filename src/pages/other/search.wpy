@@ -1,0 +1,52 @@
+<template>
+    <view class="search">
+        <view class="title">搜索门店</view>
+        
+        <view class="input">
+            <input type="text" class='inp' bindinput="search" value="{{searchValue}}"/>
+        </view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/search.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '搜索',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.search {
+  margin-top: 80rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  .title {
+    width: 470rpx;
+    line-height: 75rpx;
+    font-size: 35rpx;
+    color: #333;
+    text-align: start;
+  }
+  .input {
+    width: 470rpx;
+    
+    border-radius: 60rpx;
+    text-align: start;
+
+    border: 2rpx solid #999;
+    input {
+      padding-left: 30rpx;
+      height: 60rpx;
+      line-height: 60rpx;
+    }
+  }
+}
+</style>

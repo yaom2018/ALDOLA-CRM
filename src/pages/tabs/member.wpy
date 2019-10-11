@@ -1,0 +1,535 @@
+<template>
+    <view class="member">
+        <view class="homeTop">
+            <!-- 头部背景 -->
+            <view class="top">
+                <!-- <van-icon name="wap-nav"/> -->
+                <!-- <van-icon name="manager"/> -->
+                <!-- <span></span>
+                <span></span>-->
+            </view>
+            <view class="bottom">
+                <view class="left"></view>
+                <view class="right"></view>
+            </view>
+            <!-- 定位会员码 -->
+            <view class="memberCard">
+                <image style="width: 660rpx; height: 310rpx;" src="/assets/images/cardbg.png">
+                <view class="cardTitle">
+                    <span>ALDOLA</span>
+                    <span>VIP会员</span>
+                </view>
+                <!-- <view class="vip">vip1</view> -->
+                <view class="to_erweima" @tap="toMydetail">
+                    <image
+                        class="erweima"
+                        style="width: 100rpx; height: 100rpx;"
+                        src="/assets/images/erweima.png"
+                    >
+                    <span>点击出示二维码</span>
+                </view>
+                <view class="phone">tel: {{vipInfo.phone}}</view>
+                <!-- <view class="appeal">申诉</view> -->
+            </view>
+            <!-- 积分卡券展示 -->
+            <view class="datamessage">
+                <view class="integral">
+                    <span>积分</span>
+                    <span>{{vipInfo.actualpoint}}</span>
+                </view>
+                <view class="card" @tap="toCounon">
+                    <span>卡券</span>
+                    <span>{{uncouponnum}}</span>
+                </view>
+                <view class="balance">
+                    <span>储值余额</span>
+                    <span>{{vipInfo.actualmoeny}}</span>
+                </view>
+            </view>
+            <!-- 会员等级 -->
+            <view class="member_level">
+                <span>会员等级</span>
+                <span>{{vipInfo.qpname}}</span>
+            </view>
+            <!-- 进度条 -->
+            <view class="progress">
+                <view class="progress_bar">
+                    <view class="current_progress" style="width:{{vipInfo.actualpoint/gradepoint*100}}%">
+                        <view 
+                        class="tag" 
+                        style="position: absolute; top: -14rpx; right: 0;"
+                        >
+                            <span>{{vipInfo.actualpoint}}</span>
+                        </view>
+                    </view>
+                </view>
+                <view class="title">
+                    <span>距离升级差</span>
+                    <span>{{gradepoint-vipInfo.actualpoint}}</span>
+                    <span>分</span>
+                </view>
+            </view>
+        </view>
+        <view class="homeBottom">
+            <!-- 消费 -->
+            <view class="consume">
+                <view class="newConsume">
+                    <span>最近消费</span>
+                    <span>0元</span>
+                </view>
+                <view class="allConsume">
+                    <span>累计消费</span>
+                    <span>{{vipInfo.totalmoeny?vipInfo.totalmoeny:0}}元</span>
+                </view>
+            </view>
+            <!-- 我的福利 -->
+            <view class="weal">
+                <view class="weal_hd">我的福利</view>
+                <view class="weal_bd">
+                    <view class="item" @tap="to_new">
+                       <image
+                        style="width: 70rpx; height: 70rpx;"
+                        src="/assets/images/couponicon.png"
+                        >
+                        <span>超低折扣</span>
+                    </view>
+                    <view class="item" @tap="to_new">
+                       <image
+                        style="width: 70rpx; height: 70rpx;"
+                        src="/assets/images/totalicon.png"
+                        >
+                        <span>积分兑换</span>
+                    </view>
+                    <view class="item" @tap="to_new">
+                       <image
+                        style="width: 70rpx; height: 70rpx;"
+                        src="/assets/images/newicon.png"
+                        >
+                        <span>最新资讯</span>
+                    </view>
+                    <view class="item" @tap="to_toInformation">
+                       <image
+                        style="width: 70rpx; height: 70rpx;"
+                        src="/assets/images/birthdyicon.png"
+                        >
+                        <span>完善信息</span>
+                    </view>
+                </view>
+            </view>
+            
+            <view class="toshop" @tap="to_new">前往门店</view>
+        </view>
+        
+        <!-- 礼包弹框 -->
+        <view wx:if="{{showgift}}"  class="showgift" >
+                <view class="popout">
+                    <view class="top">
+                        <image
+                        class="popout_img"
+                        style="width: 194rpx; height: 194rpx;"
+                        src="/assets/images/popout.png"
+                        >
+                    </view>
+                    <view class="centent_top">
+                        <span>恭喜您获得</span>
+                        <span>专享优惠券礼包</span>
+                    </view>
+                    <view class="centent_bottom">
+                        <span>您的运气太好了,</span>
+                        <span>额外获得{{vipInfo.actualpoint-vipInfo.totalpoint}}积分哦</span>
+                    </view>
+                    <view class="bottom" @tap="toCoupon">去使用</view>
+                    <!-- <view class="close" @tap="closegift">
+                        <van-icon name="cross" />
+                    </view> -->
+                </view>
+        </view>
+    </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/tabs/member.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '会员中心',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+// 礼包弹框
+    .showgift{
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background:rgba(0,0,0,0.7);
+        z-index: 9999;
+        .popout {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%,-50%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border-radius: 6rpx 6rpx 0 0;
+            width: 380rpx;
+            height: 510rpx;
+            background-color: #fff;
+            .centent_top {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                span {
+                    font-size: 25rpx;
+                    line-height: 36rpx;
+                    color: #ff3e2c;
+                }
+            }
+            .centent_bottom {
+                width: 150rpx;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+                margin: 26rpx 0;
+                span {
+                    text-align: center;
+                    font-size: 16rpx;
+                    line-height: 22rpx;
+                    color: #626262;
+                }
+            }
+            .bottom {
+                width: 310rpx;
+                height: 62rpx;
+                color: #fff;
+                font-size: 24rpx;
+                text-align: center;
+                line-height: 62rpx;
+                border-radius: 62rpx;
+                background-color: #f9465c;
+            }
+        }
+        .close {
+            position: absolute;
+            bottom: -60rpx;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 50rpx;
+            height: 50rpx;
+            border: 2rpx solid #fff;
+            border-radius: 50rpx;
+            text-align: center;
+            font-size: 30rpx;
+            line-height: 50rpx;
+            color: #fff;
+        }
+    }
+.member {
+    
+  .homeTop {
+    box-sizing: border-box;
+    position: relative;
+    width: 100%;
+    // height: 300rpx;
+    .top {
+      display: flex;
+      justify-content: space-between;
+      box-sizing: border-box;
+      padding: 0 30rpx;
+      padding-top: 20rpx;
+      width: 100%;
+      height: 160rpx;
+      background-color: #444444;
+      // border-bottom: 1px solid #ccc;
+      van-icon {
+        font-size: 30rpx;
+        color: #fff;
+      }
+    }
+    .bottom {
+      width: 100%;
+      display: flex;
+      .left {
+        flex: 1;
+        height: 80rpx;
+        background: #444444;
+        border-radius: 0 0 50% / 100% 100%;
+      }
+      .right {
+        flex: 1;
+        height: 80rpx;
+        background: #444444;
+        border-radius: 0 0 100% 50% / 100%;
+      }
+      // width: 50%;
+    }
+    // 会员码
+    .memberCard {
+      overflow: hidden;
+      position: absolute;
+      top: 100rpx;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 660rpx;
+      height: 310rpx;
+      border-radius: 24rpx;
+      background-color: #c1bcbb;
+      // background-image:url('gradient2.png')
+      .cardTitle {
+        // z-index: 99;
+        position: absolute;
+        top: 30rpx;
+        left: 35rpx;
+        // display: flex;
+        // justify-content: flex-start;
+        // margin: 35rpx 0 0 30rpx;
+        span:nth-child(1) {
+          color: #fff;
+          font-weight: 700;
+          font-size: 32rpx;
+        }
+        span:nth-child(2) {
+          color: #fff;
+          font-weight: 400;
+          font-size: 32rpx;
+        }
+      }
+      .vip {
+        position: absolute;
+        right: 25rpx;
+        top: 10rpx;
+        color: #fff;
+        font-size: 42rpx;
+        font-weight: 400;
+      }
+      .to_erweima {
+        width: 100%;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        .erweima {
+          vertical-align: middle;
+        }
+        span {
+          font-size: 34rpx;
+          color: #fff;
+          font-weight: 550;
+        }
+      }
+      .phone {
+        position: absolute;
+        left: 30rpx;
+        bottom: 60rpx;
+        font-size: 24rpx;
+        color: #fff;
+      }
+      .phone {
+        position: absolute;
+        left: 30rpx;
+        bottom: 60rpx;
+        font-size: 24rpx;
+        color: #fff;
+      }
+      .appeal {
+        position: absolute;
+        right: 45rpx;
+        bottom: 45rpx;
+        font-size: 24rpx;
+        color: #fff;
+      }
+    }
+    // 数据展示
+    .datamessage {
+      display: flex;
+      justify-content: space-between;
+      margin: 190rpx 130rpx 0 60rpx;
+      .integral,
+      .card,
+      .balance {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        span:nth-child(1) {
+          color: #7a6736;
+          font-size: 24rpx;
+          margin-bottom: 8rpx;
+        }
+        span:nth-child(2) {
+          color: #d4b973;
+          font-size: 40rpx;
+          font-weight: 700;
+        }
+      }
+    }
+    // 会员等级
+    .member_level {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-left: 60rpx;
+      margin-top: 40rpx;
+      span:nth-child(1) {
+        font-size: 22rpx;
+        font-weight: 450;
+        color: #000;
+        margin-right: 10rpx;
+      }
+      span:nth-child(2) {
+        font-size: 14rpx;
+        color: #d4b973;
+        line-height: 18rpx;
+        border: 1rpx solid #d4b973;
+        border-radius: 18rpx;
+        padding: 0 8rpx;
+      }
+    }
+    // 进度条
+    .progress {
+      display: flex;
+      justify-content: flex-start;
+      align-items: center;
+      margin-left: 60rpx;
+      margin-top: 50rpx;
+      margin-bottom: 36rpx;
+      .progress_bar {
+        
+        display: flex;
+        width: 190rpx;
+        height: 12rpx;
+        // overflow: hidden;
+        background-color: #eee;
+        border-radius: 10rpx;
+        
+        .current_progress {
+          position: relative;
+          height: 100%;
+          border-radius: 12rpx;
+          background-color: #d6bd7b;
+          .tag {
+              width: 1rpx;
+              height: 22rpx;
+              background-color: #d4b973;
+              span {
+                  position: absolute;
+                  padding: 1rpx 6rpx;
+                  border-radius: 6rpx;
+                  top: -10rpx;
+                  left: 0;
+                  font-size: 9rpx;
+                  color: #fff;
+                  background-color: #d4b973;
+              }
+            }
+        }
+      }
+      .title {
+        margin-left: 14rpx;
+        height: 12rpx;
+        font-size: 12rpx;
+        span {
+          font-size: 12rpx;
+          color: #444;
+        }
+        span:nth-child(2) {
+          color: #d4b973;
+        }
+      }
+    }
+  }
+  .homeBottom {
+      margin-bottom: 120rpx;
+    //   background-color: #FBFBFB;
+    .consume {
+      padding-left: 10rpx;
+      //   padding: 38rpx 0 75rpx 15rpxx;
+      display: flex;
+      justify-content: flex-start;
+      .newConsume,
+      .allConsume {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        justify-content: center;
+        margin-left: 20rpx;
+        padding-left: 25rpx;
+        box-sizing: border-box;
+        width: 160rpx;
+        height: 90rpx;
+        background-color: #fff;
+        border-radius: 10rpx;
+        box-shadow: 0 0 10rpx #e6e3e3;
+        span:nth-child(1) {
+          font-weight: 500;
+          font-size: 14rpx;
+          color: #565656;
+          margin-bottom: 15rpx;
+        }
+        span:nth-child(2) {
+          font-size: 18rpx;
+          color: #565656;
+        }
+      }  
+    }
+    .weal {
+        margin-top: 70rpx;
+        padding-bottom: 150rpx;
+        
+      .weal_hd {
+          padding-left: 25rpx;
+        font-size: 36rpx;
+        font-weight: 500;
+      }
+      .weal_bd {
+          display: flex;
+          justify-content: space-between;
+          padding: 35rpx 55rpx 30rpx;
+          .item {
+            width: 70rpx;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin-bottom: 6rpx;
+            // height: 70rpx;
+            // background-color: pink;
+            span {
+                font-size: 18rpx;
+            }
+          }
+      }
+    }
+    // 前往门店
+    .toshop {
+        z-index: 999;
+        width: 680rpx;
+        height: 78rpx;
+        position: fixed;
+        bottom: 30rpx;
+        left: 50%;
+        transform: translateX(-50%);
+        border-radius: 78rpx;
+        text-align: center;
+        line-height: 78rpx;
+        font-size: 40rpx;
+        font-weight: 400;
+        color: #fff;
+        background-color: #d4b973;
+    }
+    
+  }
+}
+</style>
