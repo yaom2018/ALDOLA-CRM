@@ -17,14 +17,15 @@ import 'wepy-async-function'
 export default class extends wepy.app {
   config = {
     pages: [
-      'pages/other/login',
       'pages/tabs/member',
       'pages/tabs/coupon',
+      //   'pages/other/login',
       'pages/other/mydetail',
       'pages/other/mycounon',
       'pages/other/coupondetail',
       'pages/other/search',
-      'pages/other/information'
+      'pages/other/information',
+      'pages/other/integral'
     ],
     permission: {
       'scope.userLocation': {
@@ -40,20 +41,10 @@ export default class extends wepy.app {
     navigateToMiniProgramAppIdList: ['wx627972fa7b9597ee'],
     tabBar: {
       // 选中的文本颜色
-      selectedColor: '#D4B973',
+      selectedColor: '#BF8876',
       color: '#ccc',
       // tabBar 的列表
       list: [
-        {
-          // 页面路径
-          pagePath: 'pages/tabs/coupon',
-          // 显示的文本
-          text: '活动',
-          // 默认图标
-          iconPath: '/assets/icons/couponlingqu.png',
-          // 选中图标
-          selectedIconPath: '/assets/icons/couponlingqu_.png'
-        },
         {
           // 页面路径
           pagePath: 'pages/tabs/member',
@@ -62,7 +53,17 @@ export default class extends wepy.app {
           // 默认图标
           iconPath: '/assets/icons/home.png',
           // 选中图标
-          selectedIconPath: '/assets/icons/home_.png'
+          selectedIconPath: '/assets/icons/home_a.png'
+        },
+        {
+          // 页面路径
+          pagePath: 'pages/tabs/coupon',
+          // 显示的文本
+          text: '活动',
+          // 默认图标
+          iconPath: '/assets/icons/couponlingqu.png',
+          // 选中图标
+          selectedIconPath: '/assets/icons/couponlingqu_a.png'
         }
       ]
     },
@@ -75,19 +76,22 @@ export default class extends wepy.app {
       'van-button': './assets/vant/button/index',
       'van-picker': './assets/vant/picker/index',
       'van-popup': './assets/vant/popup/index',
+      'van-cell': './assets/vant/cell/index',
+      'van-cell-group': './assets/vant/cell-group/index'
     }
   }
 
   globalData = {
     userInfo: null,
     vipInfo: null,
-    eid: '',
+    // eid: 'LS000000',
+    // eid: 'e20160913452612100',
+    eid: 'E20191021395812101',
     openid: '',
     unionid: '',
     sessionKey: '',
     phone: '',
-    uncouponnum: 0,
-    showgift: false // 礼包弹框
+    uncouponnum: 0
   }
 
   constructor() {
@@ -96,11 +100,128 @@ export default class extends wepy.app {
     // 通过下面这一行代码，可以为异步的API，
     // 开启Promise功能，这样，异步API调用的结果，返回值是Promise对象
     this.use('promisify')
+    // 拦截器
+    this.intercept('request', {
+      // 发出请求时的回调函数
+      config(p) {
+        // 显示loading效果
+        wepy.showLoading({
+          title: '数据加载中...'
+        })
+        // 必须返回OBJECT参数对象，否则无法发送请求到服务端
+        return p
+      },
+
+      // 请求成功后的回调函数
+      success(p) {
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        return p
+      },
+
+      // 请求失败后的回调函数
+      fail(p) {
+        // 必须返回响应数据对象，否则后续无法对响应数据进行处理
+        return p
+      },
+
+      // 请求完成时的回调函数(请求成功或失败都会被执行)
+      complete(p) {
+        // 隐藏loading效果
+        wepy.hideLoading()
+      }
+    })
+  }
+  onLaunch() {
+    // this.getSetting()
+  }
+  async checkLogin() {
+    let loginFlag = wx.getStorageSync('loginFlag')
+    // 登录状态
+    // 用户信息授权状态
+    if (loginFlag) {
+      // 检查session_key是否过期
+      const checksessionres = await wepy.checkSession().catch(err => err)
+      console.log(checksessionres, '检查session_key是否过期')
+      if (checksessionres.errMsg !== 'checkSession:ok') {
+        return { loginstatu: false, mes: 'sessionkey过期' }
+      }
+      return { loginstatu: true, mes: 'sessionkey正常' }
+    } else {
+      // 首次登录
+      console.log('首次登录')
+      return { loginstatu: false }
+      //   this.doLogin()
+    }
+  }
+  async getuserInfo() {
+    const userinfoRes = await wepy.getUserInfo().catch(err => err)
+    console.log(userinfoRes, '有登陆过直接获取userinfo')
+    if (userinfoRes.errMsg !== 'getUserInfo:ok') {
+      console.log('没有授权用户信息')
+
+      //   this.globalData.showcheckphone = true
+      // wx.navigateTo({
+      //   url: '/pages/other/login?messageshow=true'
+      // })
+      // wepy.Toast('请授权用户信息', 'none')
+      return {
+        userinfostatu: false,
+        mes: '没有授权用户信息'
+      }
+    }
+    return {
+      userinfostatu: true,
+      mes: '已用户信息',
+      userInfomessage: userinfoRes.userInfo
+    }
+    // this.globalData.userInfo = userinfoRes.userInfo
+    // console.log(userinfoRes.userInfo)
+    // if (this.userInfoReadyCallback) {
+    //   this.userInfoReadyCallback(userinfoRes)
+    // }
+  }
+  // 发起登录
+  async doLogin() {
+    let loginRes = await wepy.login().catch(err => err)
+    console.log(loginRes, 'login')
+    if (!loginRes.errMsg === 'login:ok') {
+      return {
+        statu: false,
+        mes: '请求登录接口失败'
+      }
+    }
+
+    if (!loginRes.code) {
+      return {
+        statu: false,
+        mes: '请求登录接口code获取失败'
+      }
+    }
+
+    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+    let params = {
+      eid: this.globalData.eid,
+      code: loginRes.code
+    }
+    //   登录后台
+    let { data: sessionRes } = await wepy.post('/session/getsessionkey', params)
+    console.log(sessionRes, '登录获取sessionkey')
+    if (!sessionRes.statu) {
+      return {
+        statu: false,
+        mes: '登录失败'
+      }
+    }
+
+    this.globalData.openid = sessionRes.t.openid
+    this.globalData.unionid = sessionRes.t.unionid
+    this.globalData.sessionKey = sessionRes.t.session_key
+    return {
+      statu: true,
+      mes: '登录成功'
+    }
   }
 
-  onLaunch() {
-    // this.getUserInfo()
-  }
   // 获取已领取的优惠券数量
   async getcounon(types) {
     // 发请求
@@ -113,104 +234,67 @@ export default class extends wepy.app {
     const { data: res } = await wepy.post('/coupon/getmycoupon', params)
     console.log(res, '未使用的优惠券全局')
     if (!res.statu) {
-      console.log('暂无优惠券')
-
-      //   wepy.Toast('获取优惠券失败')
-      return
+      return { statu: false, mes: res.mes ? res.mes : '获取优惠券失败' }
     }
 
     if (res.rows) {
       this.globalData.uncouponnum = res.rows.length
     }
-
+    return { statu: true, mes: '获取优惠券成功' }
     // 获取到结果回调函数
-    if (this.getcounonCallback) {
-      this.getcounonCallback(res)
-    }
-    if (this.getcounonCallback2) {
-      this.getcounonCallback2(res)
-    }
   }
-  //   getUserInfo() {
-  //     //   登录
-  //     wx.login({
-  //       success: async res => {
-  //         console.log(res, 1)
-  //         // 发送 res.code 到后台换取 openId, sessionKey, unionId
-  //         var _this = this
-  //         let params = {
-  //           eid: _this.globalData.eid,
-  //           code: res.code
-  //         }
-  //         const { data: resuser } = await wepy.post(
-  //           '/session/getsessionkey',
-  //           params
-  //         )
-  //         console.log(resuser, 2)
-  //         if (!resuser.statu) return wepy.baseToast('登录失败')
-  //         _this.globalData.openid = resuser.t.openid
-  //         _this.globalData.unionid = resuser.t.unionid
-  //         _this.globalData.sessionKey = resuser.t.session_key
-  //         var userInfo = _this.globalData.userInfo
-  //         if (userInfo) {
-  //           console.log(userInfo, 3)
+  // 判断授权状态,有就直接赋值，没有就手动点击授权并获取赋值
 
-  //             this.getVipInfo(userInfo, _this)
-  //         } else {
-  //             console.log(1111);
-
-  //           _this.userInfoReadyCallback = res => {
-  //             userInfo = res.userInfo
-  //             console.log(userInfo, 4)
-  //             this.getVipInfo(userInfo, _this)
-  //           }
-  //         }
-  //       }
-  //     })
-  //     // 获取用户信息
-  //     wx.getSetting({
-  //       success: res => {
-  //         console.log(res, 777)
-  //         if (res.authSetting['scope.userInfo']) {
-  //           // 已经授权，可以直接调用 getUserInfo 获取头像昵称，不会弹框
-  //           wx.getUserInfo({
-  //             success: res => {
-  //               var userInfo = res.userInfo
-  //               // 可以将 res 发送给后台解码出 unionId
-  //               this.globalData.userInfo = userInfo
-  //               // 由于 getUserInfo 是网络请求，可能会在 Page.onLoad 之后才返回
-  //               // 所以此处加入 callback 以防止这种情况
-  //               if (this.userInfoReadyCallback) {
-  //                 this.userInfoReadyCallback(res)
-  //               }
-  //             }
-  //           })
-  //         }
-  //       }
-  //     })
-  //   }
   //   获取会员信息
-  //   async getVipInfo(userInfo, _this) {
-  //     let parent = {
-  //       eid: _this.globalData.eid,
-  //       usOpenid: _this.globalData.openid,
-  //       usUnionid: _this.globalData.unionid,
-  //       usNickname: userInfo.nickName,
-  //       usSex: userInfo.gender,
-  //       usLanguage: userInfo.language,
-  //       usCity: userInfo.city,
-  //       usProvince: userInfo.province,
-  //       usCountry: userInfo.country,
-  //       usHeadimgurl: userInfo.avatarUrl,
-  //       usSubscribeTime: Date.parse(new Date()) / 1000
-  //     }
-  //     const { data: res } = await wepy.post('/session/getparam', parent)
-  //     // console.log(res, 888)
-  //     _this.globalData.vipInfo = res.t
-  //     // console.log(99)
-  //     if (_this.vipInfoReadyCallback) {
-  //       _this.vipInfoReadyCallback(res)
-  //     }
-  //   }
+  async getVipInfo(dataparams) {
+    let params = {
+      eid: this.globalData.eid,
+      wxid: dataparams.wxid,
+      unionid: dataparams.unionid,
+      iv: dataparams.iv,
+      encryptedData: dataparams.encryptedData,
+      sessionKey: dataparams.sessionKey
+    }
+    // 校验用户的手机号
+    console.log(params, '校验手机号')
+
+    const { data: res } = await wepy.post('/register/checkphone', params)
+    console.log(res, '校验结果')
+
+    if (!res.statu) return { statu: false, mes: '校验手机号失败' }
+    return { statu: true, mes: '校验手机号成功', vipInfo: res.t }
+    // this.globalData.vipInfo = res.t
+    // _this.globalData.vipInfo = res.t
+    // if (_this.vipInfoReadyCallback) {
+    //   _this.vipInfoReadyCallback(res)
+    // }
+  }
+
+  async getVipInfo2(userInfo, _this) {
+    let parent = {
+      eid: this.globalData.eid,
+      usOpenid: this.globalData.openid,
+      usUnionid: this.globalData.unionid,
+      usNickname: userInfo.nickName,
+      usSex: userInfo.gender,
+      usLanguage: userInfo.language,
+      usCity: userInfo.city,
+      usProvince: userInfo.province,
+      usCountry: userInfo.country,
+      usHeadimgurl: userInfo.avatarUrl,
+      usSubscribeTime: Date.parse(new Date()) / 1000
+    }
+    // console.log(parent,77);
+
+    const { data: res } = await wepy.post('/session/getparam', parent)
+    // console.log(res, 888)
+    return res
+
+    // this.globalData.vipInfo = res.t
+    // _this.globalData.vipInfo = res.t
+    // if (_this.vipInfoReadyCallback) {
+    //   _this.vipInfoReadyCallback(res)
+    // }
+  }
 }
 </script>

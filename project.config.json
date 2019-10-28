@@ -18,7 +18,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"appid": "wx9070d9cdad1eef4c",
+	"appid": "wx9422402d1ebc7cfb",
 	"projectname": "aldolashop",
 	"miniprogramRoot": "dist/",
 	"simulatorType": "wechat",
@@ -41,7 +41,7 @@
 			"list": []
 		},
 		"miniprogram": {
-			"current": 6,
+			"current": 8,
 			"list": [
 				{
 					"id": -1,
@@ -89,6 +89,29 @@
 					"id": -1,
 					"name": "pages/other/search",
 					"pathName": "pages/other/search",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/other/login",
+					"pathName": "pages/other/login",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 8,
+					"name": "pages/tabs/member",
+					"pathName": "pages/tabs/member",
+					"query": "registnum=3",
+					"scene": 1035,
+					"referrerInfo": {}
+				},
+				{
+					"id": 9,
+					"name": "pages/other/integral",
+					"pathName": "pages/other/integral",
+					"query": "",
 					"scene": null
 				}
 			]

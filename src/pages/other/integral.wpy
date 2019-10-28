@@ -1,0 +1,40 @@
+<template>
+  <view class="integral">
+    <van-cell-group>
+      <van-cell wx:for="{{jifenList}}" wx:for-index="inx" 
+      wx:key="inx" title="{{item.ptype}}"
+      value-class 
+      title-class
+      value="{{item.jifen>=0?'+'+item.jifen:item.jifen}}积分" label="{{item.createtime}}" border="{{ true }}"/>
+    </van-cell-group>
+    <!-- 数据加载完毕后的提示消息 -->
+        <view class="over_line" hidden="{{!isLoading}}">-------- 已经全部加载完毕 --------</view>
+  </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '@/mixins/other/integral.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '积分明细',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.value-class,.title-class {
+  color: #000!important;
+  font-weight: 500;
+}
+.over_line {
+  font-size: 24rpx;
+  text-align: center;
+  height: 60rpx;
+  line-height: 60rpx;
+  color: #ddd;
+}
+</style>

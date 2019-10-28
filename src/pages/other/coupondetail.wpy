@@ -20,13 +20,22 @@
                 <span>{{coupon.cname}}</span>
                 <span>满{{coupon.sum}}元可用</span>
                 <span>通用券，小程序门店结算均可使用</span>
+                <view class="tiaoxinma">
+                    <view class="barnum">{{coupon.cid}}</view>
+			        <view class="barcode">
+			        	<image  src="{{BARImgUrl}}"  style="width: 100%" mode="widthFix" />
+			        </view>
+                    <canvas canvas-id="barcode" class="canvasqr" />
+                </view>
+                <!-- 二维码 -->
                 <view class="qrcode">
-                    <canvas canvas-id="qrcode"/>
+                    <image src="{{qrcode}}" class="qrcode_img" style="width: 100%" mode="widthFix" />
+                    <!-- <canvas canvas-id="qrcode"/> -->
                 </view>
             </view>
             <image
                 class="couponbg"
-                style="width: 546rpx; height: 587rpx;"
+                style="width: 546rpx; height: 750rpx;"
                 src="/assets/images/couponbg.png"
             >
             
@@ -50,20 +59,42 @@ export default class Home extends wepy.page {
 page {
     background-color: #f2f2f2;
 }
-
+  .tiaoxinma {
+	width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+	  margin-bottom: 20rpx;
+	  .barnum {
+		  font-size: 35rpx;
+		  text-align: center;
+		  letter-spacing:15rpx;
+		}
+		.barcode {
+			width: 350rpx;
+			height: 90rpx;
+			background-color: #fff;
+		}
+  }
+  .tiaoxinma > canvas {
+	  position: absolute;
+      top: -1000px;
+      right: 0;
+      width: 100%;
+      height: 150rpx;
+    }
 .qrcode {
-//   width: 150rpx;
-//   height: 150rpx;
+  width: 200rpx;
+  height: 200rpx;
+  background-color: #fff;
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;
 }
 
-.qrcode > canvas {
-  width: 200rpx;
-  height: 200rpx;
-}
+
 .couponbg {
     margin-top: 46rpx;
 }
@@ -110,7 +141,7 @@ page {
             top: 0;
             margin-top: 46rpx;
             width: 546rpx; 
-            height: 587rpx;
+            // height: 587rpx;
             display: flex;
             flex-direction: column;
             justify-content: center;
