@@ -1,0 +1,58 @@
+<template>
+  <view class="vip_appeal">
+    <view class="mes">
+      <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/appeal_mes.png">
+      <view class="btn" @tap="go_call">
+        <image class="v-logo" style="width: 450rpx" mode="widthFix" src="../image/appeal_btn.png">
+      </view>
+    </view>
+    
+    <view class="bjt">
+      <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/bgt.png">
+    </view>
+  </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '../js/vip_appeal.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '会员申诉',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+page {
+  background-image: linear-gradient(to right, #f7e2ba , #bb9064);
+}
+.vip_appeal {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .mes {
+    z-index: 99;
+    position: fixed;
+    top: 5%;
+    width: 100%;
+  }
+  .btn {
+    position: absolute;
+    z-index: 999;
+    // margin: 0 auto;
+    // margin-top: 50rpx;
+    // bottom: 250rpx;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  .bjt {
+    position: fixed;
+    bottom: -10rpx;
+    width: 100%;
+  }
+}
+</style>

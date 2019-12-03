@@ -1,0 +1,46 @@
+<template>
+  <view class="vip_equity">
+    <view class="image">
+      <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/vip_equity.jpg">
+    </view>
+    <view class="btn" @tap="go_back">
+      返回首页
+    </view>
+  </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '../js/vip_equity.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '会员权益',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+.vip_equity {
+  position: relative;
+  .image {
+    width: 100%;
+  }
+  .btn {
+    position: absolute;
+    bottom: 160rpx;
+    left: 50%;
+    font-size: 30rpx;
+    color: #fff;
+    line-height: 60rpx;
+    border-radius: 60rpx;
+    text-align: center;
+    transform: translateX(-50%);
+    width: 520rpx;
+    height: 60rpx;
+    background-image: linear-gradient(to right, #e9d6a8 , #d4ba75);
+  }
+}
+</style>

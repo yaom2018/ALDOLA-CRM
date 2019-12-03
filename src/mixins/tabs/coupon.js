@@ -6,6 +6,7 @@ export default class Home extends wepy.mixin {
     }
     // 页面切换显示
     onShow() {
+        this.loadCoupons(this,false)
         // 如果没有登录就强制跳转
         // if (!this.$parent.globalData.logincheck) {
         //     wepy.navigateTo({
@@ -17,13 +18,17 @@ export default class Home extends wepy.mixin {
     // 页面加载
     onLoad() {
         // if(this.$parent.globalData.logincheck){
-             this.loadCoupons(this);
+             
         //     console.log('cate页加载');
         // }
         
     }
 
-    async loadCoupons(_this) {
+    async loadCoupons(_this,flag) {
+        if(!this.$parent.globalData.vipInfo){
+            wepy.Toast('请登录')
+            return
+        }
         let params = {
             eid: this.$parent.globalData.vipInfo.eid,
             vipid: this.$parent.globalData.vipInfo.vid
@@ -39,27 +44,30 @@ export default class Home extends wepy.mixin {
             this.nocoupon = 'none',
                 this.coupons = data.rows
             this.$apply()
-        }
+        }else {
+            this.coupons = []
+              this.$apply()
+          }
+          if(flag){
+            wepy.Toast('领取成功','success')
+          }
     }
     // 处理事件函数
     methods = {
         async getEcoupon(e) {
             var _this = this;
             // console.warn(e.currentTarget.id);
-            wx.showLoading({
-                title: '正在领取'
-            })
+            wepy.Toast('正在领取')
             let params = {
                     mid: e.currentTarget.id,
                     eid: this.$parent.globalData.vipInfo.eid,
                     vipid: this.$parent.globalData.vipInfo.vid
             }
             const { data: res } = await wepy.post('/coupon/getcoupon', params)
+            
             // console.log(res);
-            if(!res.statu) return wepy.baseToast(res.mes)
-            wx.hideLoading()
-            wepy.baseToast(res.mes)
-            this.loadCoupons(_this)
+            if(!res.statu) return  wepy.Toast(res.mes)
+            this.loadCoupons(_this,true)
         }
 
     }

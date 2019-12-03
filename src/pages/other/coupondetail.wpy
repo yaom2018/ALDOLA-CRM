@@ -173,7 +173,7 @@ page {
         border-radius: 8rpx;
         text-align: center;
         line-height: 60rpx;
-        background-color: #D4B974;
+        background-color: #40434c;
     }
 }
 </style>

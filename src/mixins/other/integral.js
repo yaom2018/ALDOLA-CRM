@@ -52,7 +52,7 @@ async getjifen(){
     
     // let arr=this.jifenList.filter(item=>item.time=tool.formatTime(item.time,'Y-M-D h:m:s'))
     // console.log(arr);
-    const {data:res}=await wepy.posttest('https://b2bc.ligesoft.com/wx/wxi/score/getscoredetail',params)
+    const {data:res}=await wepy.post2('/wx/wxi/score/getscoredetail',params)
     // const {data:res}=await wepy.posttest('http://192.168.10.129:9091/wx/wxi/score/getscoredetail',params)
     console.log(res,'积分')
     if(!res.statu) return wepy.Toast(res.mes)

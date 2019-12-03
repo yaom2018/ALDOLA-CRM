@@ -1,0 +1,179 @@
+<template>
+  <view class="vip_bind">
+    <!-- 未绑定 -->
+    <view class="no_bind" wx:if="{{no_bind}}" style="{{height}}">
+      <view class="mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/bind_mes.png">
+        <view class="write">
+          <view class="write_mes">
+            <view class="input_left">VIP卡号:</view>
+            <input type="number" class="input" @input="changeInput" value="{{card_input}}">
+            <image class="icon" @tap="shaoma"  mode="widthFix" src="../image/shaoma.png">
+          </view>
+        </view>
+        <view class="btn" @tap="check_bind">
+          <image class="v-logo" style="width: 500rpx" mode="widthFix" src="../image/bind_btn.png">
+        </view>
+      </view>
+      <view class="bjt">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/bgt.png">
+      </view>
+    </view>
+    <!-- 成功绑定 -->
+    <view class="success_bind" style="{{height}}" wx:elif="{{success_bind}}">
+      <view class="success_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/success_bind.png">
+        <div class="success_card_num">
+          <span>您的新会员卡号：</span>
+          <span>{{card_num?card_num:card_input}}</span>
+        </div>
+        <div class="go_back" @tap="go_back"></div>
+      </view>
+    </view>
+    <!-- 已绑定过 -->
+    <view class="old_bind" wx:elif="{{old_bind}}" style="{{height}}">
+      <view class="success_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/old_bind.png">
+        <div class="success_card_num">
+          <span>您的会员卡号：</span>
+          <span>{{card_num}}</span>
+        </div>
+        <div class="go_back" @tap="go_back"></div>
+      </view>
+    </view>
+    <!-- 绑定失败 -->
+    <view class="shibai_bind" wx:elif="{{shibai_bind}}" style="{{height}}">
+      <view class="success_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/shibai_bind.png">
+        <!-- <div class="success_card_num">
+          <span>您的会员卡号：</span>
+          <span>A12345678901</span>
+        </div> -->
+        <div class="go_back" @tap="go_back"></div>
+      </view>
+    </view>
+  </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '../js/vip_bind.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '会员绑定',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+
+page {
+  
+}
+.vip_bind {
+  .no_bind {
+    background: linear-gradient(to right, #f7e2ba , #bb9064);
+    .mes {
+      z-index: 99;
+      position: fixed;
+      top: 5%;
+      width: 100%;
+      .write {
+        z-index: 999;
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translateX(-50%);
+        .write_mes {
+          position: relative;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          .input_left {
+              position: absolute;
+              left: 0;
+              z-index: 1000;
+              width: 100rpx;
+              height: 65rpx;
+              font-size: 25rpx;
+              line-height: 65rpx;
+              text-align: center;
+              color: #f4e8dd;
+              border-radius: 10rpx;
+              background: linear-gradient(to right, #c9803b , #dea779);
+            }
+          .input {
+            box-sizing: border-box;
+            width: 420rpx;
+            height: 65rpx;
+            padding-left: 110rpx;
+            border-radius: 10rpx;
+            color: #333;
+            font-weight: 540;
+            font-size: 28rpx;
+            background-color: #fff;
+            
+          }
+          .icon {
+            margin-left: 10rpx;
+            width: 80rpx;
+          }
+        }
+        
+      }
+    }
+    .btn {
+      position: absolute;
+      z-index: 999;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .bjt {
+      position: fixed;
+      bottom: -10rpx;
+      width: 100%;
+    }
+  }
+  .success_bind ,.old_bind , .shibai_bind {
+    background-color: #fff;
+    z-index: 9999;
+    .success_mes {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      width: 100%;
+      transform: translate(-50%,-50%);
+      .success_card_num {
+        width: 100%;
+        position: absolute;
+        bottom: 40%;
+        left: 50%;
+        text-align: center;
+        transform: translateX(-50%);
+        span {
+          font-size: 22rpx;
+        }
+        span:nth-child(1){
+          color: #926b50;
+        }
+        span:nth-child(2){
+          color: #d49a6a;
+        }
+      }
+      .go_back {
+        width: 320rpx;
+        height: 90rpx;
+        position: absolute;
+        bottom: 5%;
+        left: 50%;
+        text-align: center;
+        transform: translateX(-50%);
+        // background-color: #fff;
+      }
+    }
+  }
+}
+</style>

@@ -13,7 +13,7 @@
 import wepy from 'wepy'
 import '@/baseApi.js'
 import 'wepy-async-function'
-
+import base64 from '@/mixins/tool/base64.js'
 export default class extends wepy.app {
   config = {
     pages: [
@@ -27,6 +27,12 @@ export default class extends wepy.app {
       'pages/other/information',
       'pages/other/integral'
     ],
+    subPackages: [
+      {
+        root: 'packageA',
+        pages: ['pages/view/vip_bind','pages/view/vip_equity','pages/view/vip_appeal']
+      }
+    ],
     permission: {
       'scope.userLocation': {
         desc: '位置信息用于获取最近线下门店'
@@ -38,10 +44,10 @@ export default class extends wepy.app {
       navigationBarTitleText: 'WeChat',
       navigationBarTextStyle: 'black'
     },
-    navigateToMiniProgramAppIdList: ['wx627972fa7b9597ee'],
+    navigateToMiniProgramAppIdList: ['wxea706202be89c22b'],
     tabBar: {
       // 选中的文本颜色
-      selectedColor: '#BF8876',
+      selectedColor: '#40444D',
       color: '#ccc',
       // tabBar 的列表
       list: [
@@ -77,13 +83,16 @@ export default class extends wepy.app {
       'van-picker': './assets/vant/picker/index',
       'van-popup': './assets/vant/popup/index',
       'van-cell': './assets/vant/cell/index',
-      'van-cell-group': './assets/vant/cell-group/index'
+      'van-cell-group': './assets/vant/cell-group/index',
+      'van-progress': './assets/vant/progress/index',
+      'van-notice-bar': './assets/vant/notice-bar/index'
     }
   }
 
   globalData = {
     userInfo: null,
     vipInfo: null,
+    code: null,
     // eid: 'LS000000',
     // eid: 'e20160913452612100',
     eid: 'E20191021395812101',
@@ -91,7 +100,7 @@ export default class extends wepy.app {
     unionid: '',
     sessionKey: '',
     phone: '',
-    uncouponnum: 0
+    mycoupon: ''
   }
 
   constructor() {
@@ -131,98 +140,74 @@ export default class extends wepy.app {
       }
     })
   }
-  onLaunch() {
-    // this.getSetting()
+  async onLaunch() {
+    
   }
+  // 查询登录状态是否过期
   async checkLogin() {
-    let loginFlag = wx.getStorageSync('loginFlag')
+    let datames = wx.getStorageSync('datames')
     // 登录状态
     // 用户信息授权状态
-    if (loginFlag) {
+    if (datames) {
       // 检查session_key是否过期
       const checksessionres = await wepy.checkSession().catch(err => err)
       console.log(checksessionres, '检查session_key是否过期')
       if (checksessionres.errMsg !== 'checkSession:ok') {
-        return { loginstatu: false, mes: 'sessionkey过期' }
+        return { loginstatu: 0, mes: 'sessionkey过期' }
       }
       return { loginstatu: true, mes: 'sessionkey正常' }
     } else {
       // 首次登录
       console.log('首次登录')
-      return { loginstatu: false }
-      //   this.doLogin()
+
+      return { loginstatu: 1, mes: '首次登录' }
     }
   }
-  async getuserInfo() {
-    const userinfoRes = await wepy.getUserInfo().catch(err => err)
-    console.log(userinfoRes, '有登陆过直接获取userinfo')
-    if (userinfoRes.errMsg !== 'getUserInfo:ok') {
-      console.log('没有授权用户信息')
 
-      //   this.globalData.showcheckphone = true
-      // wx.navigateTo({
-      //   url: '/pages/other/login?messageshow=true'
-      // })
-      // wepy.Toast('请授权用户信息', 'none')
-      return {
-        userinfostatu: false,
-        mes: '没有授权用户信息'
-      }
+  // 查询权限状态
+  async getSettingStatus(scopeName) {
+    const Settingres = await wepy.getSetting({}).catch(err => err)
+    // console.log(Settingres, 'app')
+    if (Settingres.errMsg !== 'getSetting:ok') {
+      return { mes: '查询授权状态失败', statu: 0 }
     }
-    return {
-      userinfostatu: true,
-      mes: '已用户信息',
-      userInfomessage: userinfoRes.userInfo
+    if (Settingres.authSetting[scopeName] === undefined) {
+      return { mes: '没有授权' + scopeName, statu: 1 }
     }
-    // this.globalData.userInfo = userinfoRes.userInfo
-    // console.log(userinfoRes.userInfo)
-    // if (this.userInfoReadyCallback) {
-    //   this.userInfoReadyCallback(userinfoRes)
-    // }
+    if (Settingres.authSetting[scopeName] === false) {
+      return { mes: '拒绝过授权' + scopeName, statu: 2 }
+    }
+    if (Settingres.authSetting[scopeName] === true) {
+      return { mes: '已授权' + scopeName, statu: true }
+    }
   }
-  // 发起登录
-  async doLogin() {
-    let loginRes = await wepy.login().catch(err => err)
-    console.log(loginRes, 'login')
-    if (!loginRes.errMsg === 'login:ok') {
-      return {
-        statu: false,
-        mes: '请求登录接口失败'
-      }
+  // 手动打开授权设置
+  async openSetting(scopeName) {
+    const res = await wepy.openSetting().catch(err => err)
+    console.log(res)
+    if (res.errMsg !== 'openSetting:ok') {
+      return { mes: '跳转设置接口失败', statu: false }
     }
-
-    if (!loginRes.code) {
-      return {
-        statu: false,
-        mes: '请求登录接口code获取失败'
-      }
+    if (res.authSetting[scopeName] === false) {
+      return { mes: '没有设置授权' + scopeName, statu: false }
     }
-
-    // 发送 res.code 到后台换取 openId, sessionKey, unionId
+    if (res.authSetting[scopeName] === true) {
+      return { mes: '设置了授权' + scopeName, statu: true }
+    }
+  }
+  // 获取表单信息
+  async getvipmessage() {
     let params = {
       eid: this.globalData.eid,
-      code: loginRes.code
+      vip: this.globalData.vipInfo.vid
     }
-    //   登录后台
-    let { data: sessionRes } = await wepy.post('/session/getsessionkey', params)
-    console.log(sessionRes, '登录获取sessionkey')
-    if (!sessionRes.statu) {
-      return {
-        statu: false,
-        mes: '登录失败'
-      }
+    const { data: res } = await wepy.post('/myzone/tocustomform', params)
+    if (!res.statu) {
+      return { statu: false, mes: '获取自定义会员信息失败' }
     }
-
-    this.globalData.openid = sessionRes.t.openid
-    this.globalData.unionid = sessionRes.t.unionid
-    this.globalData.sessionKey = sessionRes.t.session_key
-    return {
-      statu: true,
-      mes: '登录成功'
-    }
+    return { statu: true, mes: '获取自定义会员信息成功', res: res.t }
   }
-
-  // 获取已领取的优惠券数量
+  // 获取已领取的优惠券
   async getcounon(types) {
     // 发请求
     let params = {
@@ -238,43 +223,32 @@ export default class extends wepy.app {
     }
 
     if (res.rows) {
-      this.globalData.uncouponnum = res.rows.length
+      this.globalData.mycoupon = res.rows
     }
     return { statu: true, mes: '获取优惠券成功' }
     // 获取到结果回调函数
   }
   // 判断授权状态,有就直接赋值，没有就手动点击授权并获取赋值
 
-  //   获取会员信息
-  async getVipInfo(dataparams) {
-    let params = {
-      eid: this.globalData.eid,
-      wxid: dataparams.wxid,
-      unionid: dataparams.unionid,
-      iv: dataparams.iv,
-      encryptedData: dataparams.encryptedData,
-      sessionKey: dataparams.sessionKey
-    }
-    // 校验用户的手机号
-    console.log(params, '校验手机号')
+  async getparam(params, userInfo) {
+    // let loginRes = await wepy.login().catch(err => err)
+    // console.log(loginRes)
 
-    const { data: res } = await wepy.post('/register/checkphone', params)
-    console.log(res, '校验结果')
+    // 加密手机号 encryptData
+    console.log([params.encryptedData, params.iv], '传输前')
 
-    if (!res.statu) return { statu: false, mes: '校验手机号失败' }
-    return { statu: true, mes: '校验手机号成功', vipInfo: res.t }
-    // this.globalData.vipInfo = res.t
-    // _this.globalData.vipInfo = res.t
-    // if (_this.vipInfoReadyCallback) {
-    //   _this.vipInfoReadyCallback(res)
-    // }
-  }
+    let encryptedData = base64.base64_encode(params.encryptedData)
+    let iv = base64.base64_encode(params.iv)
+    console.log([encryptedData, iv], '传输后')
 
-  async getVipInfo2(userInfo, _this) {
+    // this.globalData.code=params.code
+
     let parent = {
+      code: this.globalData.code,
+      // code: loginRes.code,
       eid: this.globalData.eid,
-      usOpenid: this.globalData.openid,
-      usUnionid: this.globalData.unionid,
+      encryptData: encryptedData,
+      iv: iv,
       usNickname: userInfo.nickName,
       usSex: userInfo.gender,
       usLanguage: userInfo.language,
@@ -284,17 +258,33 @@ export default class extends wepy.app {
       usHeadimgurl: userInfo.avatarUrl,
       usSubscribeTime: Date.parse(new Date()) / 1000
     }
-    // console.log(parent,77);
+    // console.log(parent, '传递的加密信息')
+
+    const { data: res } = await wepy.post('/register/wxsaRegister', parent)
+    // console.log(res, 888)
+    return res
+  }
+
+  async getVipInfo2(datames, userInfo) {
+    let parent = {
+      eid: this.globalData.eid,
+      usOpenid: datames.openid,
+      // usUnionid: datames.unionid?datames.unionid:datames.openid,
+      usUnionid: datames.unionid,
+      usNickname: userInfo.nickName,
+      usSex: userInfo.gender,
+      usLanguage: userInfo.language,
+      usCity: userInfo.city,
+      usProvince: userInfo.province,
+      usCountry: userInfo.country,
+      usHeadimgurl: userInfo.avatarUrl,
+      usSubscribeTime: Date.parse(new Date()) / 1000
+    }
+    console.log(parent, '用户信息')
 
     const { data: res } = await wepy.post('/session/getparam', parent)
     // console.log(res, 888)
     return res
-
-    // this.globalData.vipInfo = res.t
-    // _this.globalData.vipInfo = res.t
-    // if (_this.vipInfoReadyCallback) {
-    //   _this.vipInfoReadyCallback(res)
-    // }
   }
 }
 </script>

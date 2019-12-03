@@ -18,7 +18,7 @@
 		}
 	},
 	"compileType": "miniprogram",
-	"appid": "wx9422402d1ebc7cfb",
+	"appid": "wx4c9f05d1255545a2",
 	"projectname": "aldolashop",
 	"miniprogramRoot": "dist/",
 	"simulatorType": "wechat",
@@ -38,6 +38,10 @@
 			"list": []
 		},
 		"game": {
+			"list": []
+		},
+		"gamePlugin": {
+			"current": -1,
 			"list": []
 		},
 		"miniprogram": {
@@ -112,6 +116,33 @@
 					"name": "pages/other/integral",
 					"pathName": "pages/other/integral",
 					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "pages/other/information",
+					"pathName": "pages/other/information",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "packageA/pages/view/vip_equity",
+					"pathName": "packageA/pages/view/vip_equity",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "packageA/pages/view/vip_appeal",
+					"pathName": "packageA/pages/view/vip_appeal",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": -1,
+					"name": "packageA/pages/view/vip_bind",
+					"pathName": "packageA/pages/view/vip_bind",
 					"scene": null
 				}
 			]

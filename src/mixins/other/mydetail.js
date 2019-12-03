@@ -11,14 +11,23 @@ export default class Home extends wepy.mixin {
     qrcode: '',
     BARImgUrl: ''
   }
-  onShow() {}
+  async onShow() {
+    const res = await this.$parent.getcounon(0)
+    console.log(res)
+    if(!res.statu){
+      console.log(res.mes)
+      return 
+    }
+    this.uncouponnum=this.$parent.globalData.mycoupon.length
+    this.$apply()
+  }
   onLoad() {
     wx.showLoading({
       title: '加载中'
     })
 
     this.getMessage()
-    
+
 
 
   }
@@ -62,25 +71,7 @@ export default class Home extends wepy.mixin {
       this.userInfo = this.$parent.globalData.userInfo
       this.vipInfo = this.$parent.globalData.vipInfo
       this.$apply()
-
-    }
-    // 获取优惠券数量
-    if (this.vipInfo) {
-      // 第一次获取未使用的优惠券
-      this.$parent.getcounon(0)
-      if (this.$parent.globalData.uncouponnum > 0) {
-        this.uncouponnum = this.$parent.globalData.uncouponnum
-      }
-      // 全局执行完之后执行下面
-      this.$parent.getcounonCallback = res => {
-        console.log(res, 9999);
-        if (res.statu) {
-          this.uncouponnum = res.rows.length
-          this.$apply()
-        }
-
-      }
-    //   生成条形码
+      //   生成条形码
       tool.barcode('barcode', this.vipInfo.cardnum, 750, 150)
       setTimeout(() => {
         // 利用插件生成二维码图片
@@ -91,7 +82,6 @@ export default class Home extends wepy.mixin {
         wx.hideLoading()
       }, 500);
     }
-
   }
 
 
@@ -110,13 +100,19 @@ export default class Home extends wepy.mixin {
   }
 
 
-  
+
   methods = {
     // 前往优惠券
     toCounon() {
       wx.navigateTo({
         url: '/pages/other/mycounon'
       })
+    },
+    // 前往积分明细
+    toIntegral(){
+        wx.navigateTo({
+          url: '/pages/other/integral'
+        })
     },
     // 返回个人中心
     toback() {

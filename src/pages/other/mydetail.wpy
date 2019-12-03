@@ -7,7 +7,7 @@
         </view>
         <!-- 数据 -->
         <view class="message">
-            <view class="item">
+            <view class="item" @tap="toIntegral">
                 <span>{{vipInfo.actualpoint}}</span>
                 <span>积分</span>
             </view>
@@ -26,9 +26,9 @@
         </view>
         <view class="tiaoxinma">
             <view class="barnum">{{vipInfo.cardnum}}</view>
-			<view class="barcode">
-				<image  src="{{BARImgUrl}}"  style="width: 100%" mode="widthFix" />
-			</view>
+			      <view class="barcode">
+			      	<image  src="{{BARImgUrl}}"  style="width: 100%" mode="widthFix" />
+			      </view>
             <canvas canvas-id="barcode" class="canvasqr" />
         </view>
         <!-- 二维码 -->
@@ -103,7 +103,7 @@ export default class Home extends wepy.page {
       justify-content: center;
       align-items: center;
       span:nth-child(1) {
-        color: #f5b682;
+        color: #40434c;
         font-size: 30rpx;
       }
       span:nth-child(2) {
@@ -130,7 +130,8 @@ export default class Home extends wepy.page {
 	  .barnum {
 		  font-size: 35rpx;
 		  text-align: center;
-		  letter-spacing:15rpx;
+      letter-spacing:15rpx;
+      margin-bottom: 20rpx;
 		}
 		.barcode {
 			width: 600rpx;
@@ -162,7 +163,7 @@ export default class Home extends wepy.page {
       text-align: center;
       line-height: 50rpx;
       font-size: 24rpx;
-      background-color: #d4b974;
+      background-color: #40434c;
     }
     van-icon {
       color: #00943b;
@@ -190,9 +191,9 @@ export default class Home extends wepy.page {
     justify-content: center;
     align-items: center;
     border-radius: 8rpx 8rpx 0 0;
-    background-color: #f5b682;
+    background-color: #40434c;
     span {
-      color: #999;
+      color: #fff;
       font-size: 24rpx;
     }
   }
@@ -204,7 +205,8 @@ export default class Home extends wepy.page {
         line-height: 60rpx;
         padding: 0 20rpx;
         border-radius: 10rpx;
-         background-color: #d4b974;
+        color: #fff;
+         background-color: #40434c;
     }
 }
 </style>

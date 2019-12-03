@@ -39,12 +39,13 @@ wepy.hLoad = () => {
 // 请求根路径
 // get
 // const baseURL = 'https://m.ligesoft.com/wx/wxsa'
-const baseURL = 'https://b2bc.ligesoft.com/wx/wxsa'
+const baseURL = 'https://b2bc.ligesoft.com'
+const URL = '/wx/wxsa'
 // const baseURL = 'http://t.ligesoft.com/wx/wxsa'
-// const baseURL = 'http://192.168.10.129:9091/wx/wxsa'
+// const baseURL = 'http://192.168.10.104:9091'
 wepy.get = (url, data = {}) => {
     return wepy.request({
-        url: baseURL + url,
+        url: baseURL+URL + url,
         method: 'GET',
         data
     })
@@ -52,7 +53,7 @@ wepy.get = (url, data = {}) => {
 // post
 wepy.post = (url, data = {}) => {
     return wepy.request({
-        url: baseURL + url,
+        url: baseURL+URL + url,
         method: 'POST',
         data,
         header: {
@@ -61,17 +62,17 @@ wepy.post = (url, data = {}) => {
           }
     })
 }
-// test
-wepy.gettest = (url, data = {}) => {
+// result2
+wepy.get2 = (url, data = {}) => {
     return wepy.request({
-        url: url,
+        url: baseURL+url,
         method: 'GET',
         data
     })
 }
-wepy.posttest = (url, data = {}) => {
+wepy.post2 = (url, data = {}) => {
     return wepy.request({
-        url: url,
+        url: baseURL+url,
         method: 'POST',
         data,
         header: {

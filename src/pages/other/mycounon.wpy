@@ -30,7 +30,7 @@
                     wx:for="{{uncounon}}" 
                     wx:for-item="item"
                     wx:for-index="i"
-                    wx:key="item.id"
+                    wx:key="i"
                     id="{{item.id}}"
                     data-presentcoupon="{{item}}"
                     @tap="tocounonDetail">
@@ -81,7 +81,8 @@
                 </view>
                 <!-- 卡券-->
                 <block wx-else>
-                    <view class="card" wx:for="{{bycounon}}" wx:key="*this">
+                    <view class="card" wx:for="{{bycounon}}" wx:for-index="i"
+                    wx:key="i">
                     <view class="label">使用</view>
                     <view class="left">
                         <span></span>
@@ -129,7 +130,8 @@
                 </view>
                 <!-- 卡券-->
                 <block wx-else>
-                    <view class="card" wx:for="{{outcounon}}" wx:key="*this">
+                    <view class="card" wx:for="{{outcounon}}" wx:for-index="i"
+                    wx:key="i">
                     <view class="label">使用</view>
                     <view class="left">
                         <span></span>
@@ -239,11 +241,11 @@ page {
     right: 30rpx;
     font-size: 16rpx;
     padding: 0rpx 10rpx;
-    color: #fbbe65;
+    color: #40434c;
     border-radius: 22rpx;
     height: 22rpx;
     line-height: 22rpx;
-    border: 2rpx solid #fbbe65;
+    border: 2rpx solid #40434c;
   }
   .left {
     width: 20rpx;
@@ -252,7 +254,7 @@ page {
     flex-direction: column;
     justify-content: space-between;
     align-items: flex-end;
-    background-color: #fdae2d;
+    background-color: #40434c;
     span {
       width: 10rpx;
       height: 10rpx;

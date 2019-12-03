@@ -6,8 +6,9 @@
         </view>
         <view
             wx:for="{{coupons}}"
+            wx:for-index="idx"
             wx:for-item="coupon"
-            wx:key="coupon.id"
+            wx:key="idx"
             class="couponbox"
             id="{{coupon.id}}"
             bindtap="getEcoupon"
@@ -83,12 +84,12 @@ margin: 30rpx 0;
       justify-content: space-around;
       align-items: flex-end;
       .couponbox-left-denomination {
-        color: #D4B973;
+        color: #40434c;
         font-size: 75rpx;
         font-weight: 600;
       }
       .couponbox-left-m {
-        color: #D4B973;
+        color: #40434c;
         font-size: 36rpx;
         font-size: 450;
         margin-bottom: 10rpx;
@@ -109,8 +110,8 @@ margin: 30rpx 0;
     .couponbox-right-two {
       .item_in {
         font-size: 24rpx;
-        color: #D4B973;
-        border: 2rpx solid #D4B973;
+        color: #40434c;
+        border: 2rpx solid #40434c;
         border-radius: 10rpx;
         padding: 10rpx;
       }
