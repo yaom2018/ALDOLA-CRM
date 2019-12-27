@@ -1,162 +1,172 @@
 <template>
-    <view class="coupon">
-        <van-tabs active="{{ active }}" bind:change="onChange" color="#07C160" line-width="100">
-            <van-tab title="未使用({{uncounon.length}})">
-                <!-- 输入框 -->
-                <view class="convert">
-                    <span>
-                        <van-cell-group>
-                            <van-field
-                                value="{{ value }}"
-                                placeholder="请输入兑换码"
-                                border="{{ false }}"
-                                bind:change="onChange"
-                            />
-                        </van-cell-group>
-                    </span>
-                    <span>兑换</span>
+  <view class="coupon">
+    <van-tabs active="{{ active }}" bind:change="onChange" color="#07C160" line-width="100">
+      <van-tab title="未使用({{uncounon.length}})">
+        <!-- 输入框 -->
+        <view class="convert">
+          <span>
+            <van-cell-group>
+              <van-field
+                value="{{ value }}"
+                placeholder="请输入兑换码"
+                border="{{ false }}"
+                bind:change="onChange"
+              />
+            </van-cell-group>
+          </span>
+          <span>兑换</span>
+        </view>
+        <!-- 卡券 -->
+        <!-- 暂无卡券>-->
+        <view class="nocoupon" wx:if="{{uncounon.length<1}}">
+          <van-icon name="coupon" class="nocoupon-icon"/>
+          <view class="nocoupon-title">暂无优惠券</view>
+          <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+        </view>
+        <!-- 卡券-->
+        <block wx:else>
+          <view
+            class="card"
+            wx:for="{{uncounon}}"
+            wx:for-item="item"
+            wx:for-index="i"
+            wx:key="i"
+            id="{{item.id}}"
+            data-presentcoupon="{{item}}"
+            @tap="tocounonDetail"
+          >
+            <view class="label">使用</view>
+            <view class="left">
+              <span></span>
+              <span></span>
+            </view>
+            <view class="right">
+              <view class="title">线下门店通用</view>
+              <view class="content">
+                <view class="content_left">
+                  <!-- <span>￥</span> -->
+                  <span class="mmoney">{{item.mmoney}}</span>
+                  <span class="danwei" wx:if="{{item.discount==1}}">折</span>
+                  <span wx:else>元</span>
                 </view>
-                <!-- 卡券 -->
-                <!-- 暂无卡券>-->
-                <view class="nocoupon" wx:if="{{uncounon.length<1}}">
-                    <van-icon name="coupon" class="nocoupon-icon"/>
-                    <view class="nocoupon-title">暂无优惠券</view>
-                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+                <view class="content_right">
+                  <span>{{item.cname}}</span>
+                  <span>满{{item.sum}}元可用</span>
+                  <span wx:if="{{item.discount==1}}">最大减少金额:{{item.maxmoney}}元</span>
+                  <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
                 </view>
-                <!-- 卡券-->
-                <block wx:else>
-                    <view 
-                    class="card" 
-                    wx:for="{{uncounon}}" 
-                    wx:for-item="item"
-                    wx:for-index="i"
-                    wx:key="i"
-                    id="{{item.id}}"
-                    data-presentcoupon="{{item}}"
-                    @tap="tocounonDetail">
-                        <view class="label">使用</view>
-                        <view class="left">
-                            <span></span>
-                            <span></span>
-                        </view>
-                        <view class="right">
-                            <view class="title">线上门店通用</view>
-                            <view class="content">
-                                <view class="content_left">
-                                    <span>￥</span>
-                                    <span>{{item.mmoney}}</span>
-                                </view>
-                                <view class="content_right">
-                                    <span>{{item.cname}}</span>
-                                    <span>满{{item.sum}}元可用</span>
-                                    <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
-                                </view>
-                            </view>
-                            <view class="explain">*部分特价商品不可用</view>
-                        </view>
-                    </view>
-                </block>
-            </van-tab>
-            <van-tab title="已使用({{bycounon.length}})">
-                <!-- 输入框 -->
-                <view class="convert">
-                    <span>
-                        <van-cell-group>
-                            <van-field
-                                value="{{ value }}"
-                                placeholder="请输入兑换码"
-                                border="{{ false }}"
-                                bind:change="onChange"
-                            />
-                        </van-cell-group>
-                    </span>
-                    <span>兑换</span>
+              </view>
+              <view class="explain">*部分特价商品不可用</view>
+            </view>
+          </view>
+        </block>
+        <!-- 数据加载完毕后的提示消息 -->
+        <!-- <view class="over_line" hidden="{{!isLoading}}">-------- 我是有底线的 --------</view> -->
+      </van-tab>
+      <van-tab title="已使用({{bycounon.length}})">
+        <!-- 输入框 -->
+        <view class="convert">
+          <span>
+            <van-cell-group>
+              <van-field
+                value="{{ value }}"
+                placeholder="请输入兑换码"
+                border="{{ false }}"
+                bind:change="onChange"
+              />
+            </van-cell-group>
+          </span>
+          <span>兑换</span>
+        </view>
+        <!-- 卡券 -->
+        <!-- 暂无卡券>-->
+        <view class="nocoupon" wx:if="{{bycounon.length<1}}">
+          <van-icon name="coupon" class="nocoupon-icon"/>
+          <view class="nocoupon-title">暂无优惠券</view>
+          <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+        </view>
+        <!-- 卡券-->
+        <block wx-else>
+          <view class="card" wx:for="{{bycounon}}" wx:for-index="i" wx:key="i">
+            <view class="label">已使用</view>
+            <view class="left">
+              <span></span>
+              <span></span>
+            </view>
+            <view class="right">
+              <view class="title">线下门店通用</view>
+              <view class="content">
+                <view class="content_left">
+                  <!-- <span>￥</span> -->
+                  <span class="mmoney">{{item.mmoney}}</span>
+                  <span class="danwei" wx:if="{{item.discount==1}}">折</span>
+                  <span wx:else>元</span>
                 </view>
-                <!-- 卡券 -->
-                <!-- 暂无卡券>-->
-                <view class="nocoupon" wx:if="{{bycounon.length<1}}">
-                    <van-icon name="coupon" class="nocoupon-icon"/>
-                    <view class="nocoupon-title">暂无优惠券</view>
-                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+                <view class="content_right">
+                  <span>{{item.cname}}</span>
+                  <span>满{{item.sum}}元可用</span>
+                  <span wx:if="{{item.discount==1}}">最大减少金额:{{item.maxmoney}}元</span>
+                  <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
                 </view>
-                <!-- 卡券-->
-                <block wx-else>
-                    <view class="card" wx:for="{{bycounon}}" wx:for-index="i"
-                    wx:key="i">
-                    <view class="label">使用</view>
-                    <view class="left">
-                        <span></span>
-                        <span></span>
-                    </view>
-                    <view class="right">
-                        <view class="title">线上门店通用</view>
-                        <view class="content">
-                            <view class="content_left">
-                                <span>￥</span>
-                                <span>{{item.mmoney}}</span>
-                            </view>
-                            <view class="content_right">
-                                <span>{{item.cname}}</span>
-                                <span>满{{item.sum}}元可用</span>
-                                <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
-                            </view>
-                        </view>
-                        <view class="explain">*部分特价商品不可用</view>
-                    </view>
+              </view>
+              <view class="explain">*部分特价商品不可用</view>
+            </view>
+          </view>
+        </block>
+      </van-tab>
+      <van-tab title="已过期({{outcounon.length}})">
+        <!-- 输入框 -->
+        <view class="convert">
+          <span>
+            <van-cell-group>
+              <van-field
+                value="{{ value }}"
+                placeholder="请输入兑换码"
+                border="{{ false }}"
+                bind:change="onChange"
+              />
+            </van-cell-group>
+          </span>
+          <span>兑换</span>
+        </view>
+        <!-- 卡券 -->
+        <!-- 暂无卡券>-->
+        <view class="nocoupon" wx:if="{{outcounon.length<1}}">
+          <van-icon name="coupon" class="nocoupon-icon"/>
+          <view class="nocoupon-title">暂无优惠券</view>
+          <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
+        </view>
+        <!-- 卡券-->
+        <block wx-else>
+          <view class="card" wx:for="{{outcounon}}" wx:for-index="i" wx:key="i">
+            <view class="label">已过期</view>
+            <view class="left">
+              <span></span>
+              <span></span>
+            </view>
+            <view class="right">
+              <view class="title">线下门店通用</view>
+              <view class="content">
+                <view class="content_left">
+                  <!-- <span>￥</span> -->
+                  <span class="mmoney">{{item.mmoney}}</span>
+                  <span class="danwei" wx:if="{{item.discount==1}}">折</span>
+                  <span wx:else>元</span>
                 </view>
-                </block>
-            </van-tab>
-            <van-tab title="已过期({{outcounon.length}})">
-                <!-- 输入框 -->
-                <view class="convert">
-                    <span>
-                        <van-cell-group>
-                            <van-field
-                                value="{{ value }}"
-                                placeholder="请输入兑换码"
-                                border="{{ false }}"
-                                bind:change="onChange"
-                            />
-                        </van-cell-group>
-                    </span>
-                    <span>兑换</span>
+                <view class="content_right">
+                  <span>{{item.cname}}</span>
+                  <span>满{{item.sum}}元可用</span>
+                  <span wx:if="{{item.discount==1}}">最大减少金额:{{item.maxmoney}}元</span>
+                  <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
                 </view>
-                <!-- 卡券 -->
-                <!-- 暂无卡券>-->
-                <view class="nocoupon" wx:if="{{outcounon.length<1}}">
-                    <van-icon name="coupon" class="nocoupon-icon"/>
-                    <view class="nocoupon-title">暂无优惠券</view>
-                    <!-- <view class="nocoupon-btn" bindtap="tocoupon">前往领券</view> -->
-                </view>
-                <!-- 卡券-->
-                <block wx-else>
-                    <view class="card" wx:for="{{outcounon}}" wx:for-index="i"
-                    wx:key="i">
-                    <view class="label">使用</view>
-                    <view class="left">
-                        <span></span>
-                        <span></span>
-                    </view>
-                    <view class="right">
-                        <view class="title">线上门店通用</view>
-                        <view class="content">
-                            <view class="content_left">
-                                <span>￥</span>
-                                <span>{{item.mmoney}}</span>
-                            </view>
-                            <view class="content_right">
-                                <span>{{item.cname}}</span>
-                                <span>满{{item.sum}}元可用</span>
-                                <span>{{item.starttimeStr}}至{{item.endtimeStr}}</span>
-                            </view>
-                        </view>
-                        <view class="explain">*部分特价商品不可用</view>
-                    </view>
-                </view>
-                </block>
-            </van-tab>
-        </van-tabs>
-    </view>
+              </view>
+              <view class="explain">*部分特价商品不可用</view>
+            </view>
+          </view>
+        </block>
+      </van-tab>
+    </van-tabs>
+  </view>
 </template>
            
 <script>
@@ -279,15 +289,16 @@ page {
       .content_left {
         // width: 90rpx;
         // height: 70rpx;
-        margin-right:10rpx;
-        span:nth-child(1) {
+        margin-right: 10rpx;
+        .danwei {
           font-size: 32rpx;
           color: #333;
         }
-        span:nth-child(2) {
+        .mmoney {
           font-size: 80rpx;
           font-family: '黑体';
           color: #333;
+          margin: 0 6rpx;
         }
       }
       .content_right {
@@ -304,6 +315,10 @@ page {
           margin-bottom: 6rpx;
         }
         span:nth-child(3) {
+          font-size: 14rpx;
+          color: #999;
+        }
+        span:nth-child(4) {
           font-size: 14rpx;
           color: #999;
         }

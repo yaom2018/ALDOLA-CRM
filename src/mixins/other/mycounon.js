@@ -8,6 +8,10 @@ export default class Home extends wepy.mixin {
         bycounon: [],
         outused: 0,//已过期
         outcounon: [],
+        // 是否显示
+        isLoading: false,
+        limit: 20,
+        offset: 0,
     }
     // 页面切换显示
     onShow() {
@@ -23,8 +27,8 @@ export default class Home extends wepy.mixin {
         //   }
         // 获取三种优惠券
         this.getcounon(0)
+        this.getcounon(1)
         this.getcounon(2)
-        this.getcounon(3)
 
         //   wepy.hLoad()
     }
@@ -33,18 +37,27 @@ export default class Home extends wepy.mixin {
         wepy.Load()
         // 发请求
         let params = {
-            eid: this.$parent.globalData.vipInfo.eid,
-            vipid: this.$parent.globalData.vipInfo.vid,
-            ctype: types
+            limit: this.limit,
+            offset: this.offset,
+            p: {
+                eid: this.$parent.globalData.vipInfo.eid,
+                vipid: this.$parent.globalData.vipInfo.vid,
+                ctype: types
+            },
+            
         }
         const { data: res } = await wepy.post('/coupon/getmycoupon', params)
         console.log(res,'获取我的优惠券');
-        if (res.statu) {
+        if(res==null){
+            console.log('没有优惠券')
+            return
+        }
+        if (res.statu==true) {
             if (types == 0) {
                 this.uncounon = res.rows
-            } else if (types == 2) {
+            } else if (types == 1) {
                 this.bycounon = res.rows
-            } else if (types == 3) {
+            } else if (types == 2) {
                 this.outcounon = res.rows
             }
             this.$apply()
@@ -59,9 +72,9 @@ export default class Home extends wepy.mixin {
             if (event.detail.index == 0) {
                 types = 0
             } else if (event.detail.index == 1) {
-                types = 2
+                types = 1
             } else if (event.detail.index == 2) {
-                types = 3
+                types = 2
             }
             // 切换tab栏，重新刷新优惠券
             this.getcounon(types)
@@ -86,9 +99,13 @@ export default class Home extends wepy.mixin {
         // 前往优惠券详情
         tocounonDetail(e) {
             console.log(e.currentTarget.dataset.presentcoupon,'前往指定优惠券信息');
-            let coupon=e.currentTarget.dataset.presentcoupon
+            // let coupon=e.currentTarget.dataset.presentcoupon
+            let couponstr=JSON.stringify(e.currentTarget.dataset.presentcoupon)
+            // wepy.navigateTo({
+            //     url:'/pages/other/coupondetail?cid='+coupon.cid+'&id='+coupon.id
+            // })
             wepy.navigateTo({
-                url:'/pages/other/coupondetail?cid='+coupon.cid+'&cname='+coupon.cname+'&cname='+coupon.cname+'&mmoney='+coupon.mmoney+'&cname='+coupon.cname+'&startimeStr='+coupon.startimeStr+'&endtimeStr='+coupon.endtimeStr+'&sum='+coupon.sum
+                url:'/pages/other/coupondetail?coupon='+couponstr
             })
         },
         // 前往领券

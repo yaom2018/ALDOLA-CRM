@@ -1,7 +1,7 @@
 <template>
   <view class="vip_equity">
     <view class="image">
-      <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/vip_equity.jpg">
+      <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/vip_equity.png">
     </view>
     <view class="btn" @tap="go_back">
       返回首页

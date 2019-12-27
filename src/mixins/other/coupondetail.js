@@ -2,35 +2,37 @@ import wepy from 'wepy'
 import tool from '@/mixins/tool/tool'
 import QR from "@/mixins/tool/wxqrcode.js"
 export default class Home extends wepy.mixin {
-    data = {
-        // 当前优惠券详情
-        coupon:[],
-        qrcode: '',
-        BARImgUrl: ''
-    }
-    onShow() { }
-    onLoad(options) {
-        wx.showLoading({
-            title: '加载中'
-          })
-        console.log(options,'当前优惠券详情');
-        this.coupon=options
-        this.$apply()
-          //   生成条形码
-      tool.barcode('barcode', options.cid, 750, 150)
-        setTimeout(() => {
-            // 利用插件生成二维码图片
-            let qrcodeSize = this.getQRCodeSize()
-            this.createQRCode(options.cid, qrcodeSize)
-            // 获取画布的图像信息
-            this.saveCanvas()
-            wx.hideLoading()
-          }, 500);
-    }
-    // 下拉刷新
-    onPullDownRefresh() {
-    }
-    //适配不同屏幕大小的canvas
+  data = {
+    // 当前优惠券详情
+    coupon: [],
+    qrcode: '',
+    BARImgUrl: ''
+  }
+  onShow() {}
+  onLoad(options) {
+    wx.showLoading({
+      title: '加载中'
+    })
+    console.log(options, '当前优惠券');
+    this.coupon=JSON.parse(options.coupon)
+    this.$apply()
+    
+    setTimeout(() => {
+      //   生成条形码
+    tool.barcode('barcode', this.coupon.cid, 750, 150)
+      // 利用插件生成二维码图片
+      let qrcodeSize = this.getQRCodeSize()
+      this.createQRCode(this.coupon.cid, qrcodeSize)
+      // 获取画布的图像信息
+      this.saveCanvas()
+      wx.hideLoading()
+    }, 500);
+    // 获取优惠券详情
+    // this.getcouponDetail(options.id,options.cid)
+  }
+  // 下拉刷新
+  onPullDownRefresh() {}
+  //适配不同屏幕大小的canvas
   getQRCodeSize() {
     var size = 0;
     try {
@@ -57,8 +59,8 @@ export default class Home extends wepy.mixin {
     that.qrcode = _img
     this.$apply()
   }
-// 获取条形码画布的图像信息
-saveCanvas() {
+  // 获取条形码画布的图像信息
+  saveCanvas() {
     wx.canvasToTempFilePath({
       canvasId: 'barcode',
       success: (res) => {
@@ -70,15 +72,27 @@ saveCanvas() {
       }
     })
   }
-    methods = {
-        // 前往会员详情
-        toMydetail(){
-            wx.navigateTo({
-                url: '/pages/other/mydetail'})
-        }
+  // async getcouponDetail(id,cid) {
+  //   let params = {
+  //     id: id,
+  //     cid:cid
+  //   }
+  //   const {
+  //     data: res
+  //   } = await wepy.post('/coupon/getdetail', params)
+  //   console.log(res,'优惠券详情');
+  //   if(!res.statu) return wepy.T
+  // }
+  methods = {
+    // 前往会员详情
+    toMydetail() {
+      wx.navigateTo({
+        url: '/pages/other/mydetail'
+      })
     }
-    // 计算函数
-    computed = {
+  }
+  // 计算函数
+  computed = {
 
-    }
+  }
 }

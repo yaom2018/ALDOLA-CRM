@@ -1,0 +1,231 @@
+<template>
+  <view class="jifen_level">
+    <view class="level" wx:if="{{level}}">
+      <view class="mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/jifen_level.png">
+
+        <view class="vip_data">
+          <view class="vip_title">亲爱的老用户您好:</view>
+          <view class="vip_data_mes">
+            <span>您将使用</span>
+            <span>1000积分</span>
+            <span>升级成为:</span>
+            <span>金卡会员</span>
+          </view>
+        </view>
+      </view>
+      <view class="btn">
+        <image class="v-logo" @tap="confirm_level" style="width: 300rpx" mode="widthFix" src="../image/level_btn1.png">
+        <image class="v-logo" @tap="cancel_level" style="width: 300rpx" mode="widthFix" src="../image/level_btn2.png">
+      </view>
+      <view class="bjt">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/bgt.png">
+      </view>
+    </view>
+    <!-- 成功升级 -->
+    <view class="success_level" style="{{height}}" wx:elif="{{success_level}}">
+      <view class="success_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/success_level.png">
+        <view class="success_data">
+          <view class="success_point">
+            <span>剩余可用积分:</span>
+            <span>{{vipInfo.actualpoint}}积分</span>
+          </view>
+          <view class="success_grade">
+            <span>当前会员等级:</span>
+            <span>{{vipInfo.qpname}}</span>
+          </view>
+        </view>
+        <view class="go_back" @tap="go_back"></view>
+      </view>
+    </view>
+    <!-- 失败升级 -->
+    <view class="noting_level" style="{{height}}" wx:elif="{{noting_level}}">
+      <view class="noting_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/noting_level.png">
+        <view class="noting_data">
+          <view class="noting_point">
+            <span>请查看您的账号可用积分是否大于1000积分</span>
+          </view>
+        </view>
+        <view class="go_back" @tap="go_back"></view>
+      </view>
+    </view>
+    <!-- 已经升级过了 -->
+    <view class="old_level" style="{{height}}" wx:elif="{{old_level}}">
+      <view class="old_mes">
+        <image class="v-logo" style="width: 100%" mode="widthFix" src="../image/old_level.png">
+        <view class="old_data">
+          <view class="old_point">
+            <span>剩余可用积分:</span>
+            <span>{{vipInfo.actualpoint}}积分</span>
+          </view>
+          <view class="old_grade">
+            <span>当前会员等级:</span>
+            <span>{{vipInfo.qpname}}</span>
+          </view>
+        </view>
+        <view class="old_hint">您已是金卡会员，无需升级</view>
+        <view class="go_back" @tap="go_back"></view>
+      </view>
+    </view>
+  </view>
+</template>
+           
+<script>
+import wepy from 'wepy'
+import mix from '../js/jifen_level.js'
+export default class Home extends wepy.page {
+  mixins = [mix]
+  config = {
+    navigationBarTitleText: '积分升级',
+    navigationBarBackgroundColor: '#444444',
+    navigationBarTextStyle: 'white'
+  }
+  methods = {}
+}
+</script>
+<style lang="less">
+page {
+  background-image: linear-gradient(to right, #f7e2ba, #bb9064);
+}
+.level {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  .mes {
+    z-index: 99;
+    position: fixed;
+    top: 5%;
+    width: 100%;
+    .vip_data {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 0 15%;
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+      top: 20%;
+      .vip_title,
+      .vip_data_mes {
+        font-size: 45rpx;
+        font-weight: 550;
+        color: #996f51;
+        line-height: 60rpx;
+      }
+      .vip_data_mes {
+        span:nth-child(1) {
+          padding-left: 2em;
+        }
+        span:nth-child(2),
+        span:nth-child(4) {
+          color: #ff5400;
+        }
+        span:nth-child(4) {
+          text-decoration: underline;
+        }
+      }
+    }
+  }
+  .btn {
+    position: fixed;
+    z-index: 999;
+    // margin: 0 auto;
+    // margin-top: 50rpx;
+    // bottom: 250rpx;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100rpx;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .bjt {
+    // z-index: 100;
+    position: fixed;
+    bottom: -10rpx;
+    width: 100%;
+  }
+}
+.success_level,
+.noting_level,.old_level {
+  width: 100%;
+  background-color: #fff;
+  z-index: 9999;
+  .success_mes,
+  .noting_mes,.old_mes {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 100%;
+    transform: translate(-50%, -50%);
+    .success_data,.old_data {
+      width: 100%;
+      position: absolute;
+      bottom: 40%;
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%);
+      .success_point,
+      .success_grade ,.old_point,.old_grade {
+        width: 100%;
+        span {
+          font-size: 35rpx;
+          line-height: 68rpx;
+          font-weight: 550;
+          color: #d2ad7d;
+        }
+        span:nth-child(1) {
+        }
+        span:nth-child(2) {
+          text-decoration: underline;
+        }
+      }
+    }
+    .old_hint {
+       width: 100%;
+      position: absolute;
+      bottom: 25%;
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%);
+      font-size: 35rpx;
+      line-height: 68rpx;
+      font-weight: 550;
+      color: #ff5400;
+    }
+    .noting_data {
+      width: 100%;
+      position: absolute;
+      bottom: 35%;
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%);
+      .noting_point {
+        box-sizing: border-box;
+        padding: 0 25%;
+        width: 100%;
+        text-align: start;
+        span {
+          
+          font-size: 30rpx;
+          line-height: 50rpx;
+          font-weight: 550;
+          color: #d2ad7d;
+        }
+      }
+    }
+
+    .go_back {
+      width: 320rpx;
+      height: 90rpx;
+      position: absolute;
+      bottom: 7%;
+      left: 50%;
+      text-align: center;
+      transform: translateX(-50%);
+      // background-color: #fff;
+    }
+  }
+}
+</style>

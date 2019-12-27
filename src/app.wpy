@@ -17,20 +17,36 @@ import base64 from '@/mixins/tool/base64.js'
 export default class extends wepy.app {
   config = {
     pages: [
+      // 会员中心
       'pages/tabs/member',
+      // 活动优惠券
       'pages/tabs/coupon',
-      //   'pages/other/login',
+      // 我的会员码
       'pages/other/mydetail',
+      // 我的优惠券
       'pages/other/mycounon',
+      // 优惠券详情
       'pages/other/coupondetail',
+      // 搜索栏
       'pages/other/search',
+      // 完善信息
       'pages/other/information',
+      // 积分明细
       'pages/other/integral'
     ],
     subPackages: [
       {
         root: 'packageA',
-        pages: ['pages/view/vip_bind','pages/view/vip_equity','pages/view/vip_appeal']
+        pages: [
+          // vip绑定
+          'pages/view/vip_bind',
+          // 会员权益
+          'pages/view/vip_equity',
+          // 会员申诉
+          'pages/view/vip_appeal',
+          // 积分升级
+          'pages/view/jifen_level'
+        ]
       }
     ],
     permission: {
@@ -92,6 +108,8 @@ export default class extends wepy.app {
   globalData = {
     userInfo: null,
     vipInfo: null,
+    // openid和unionid
+    datames: null,
     code: null,
     // eid: 'LS000000',
     // eid: 'e20160913452612100',
@@ -141,8 +159,74 @@ export default class extends wepy.app {
     })
   }
   async onLaunch() {
-    
+    // 提示用户更新版本
+    this.autoUpdate()
   }
+  autoUpdate() {
+    let self = this
+    // 获取小程序更新机制兼容
+    if (!wx.canIUse('getUpdateManager')) {
+      // 微信版本低
+      // 如果希望用户在最新版本的客户端上体验您的小程序，可以这样子提示
+      wx.showModal({
+        title: '提示',
+        content:
+          '当前微信版本过低，无法使用该功能，请升级到最新微信版本后重试。'
+      })
+      return
+    }
+    if (wx.canIUse('getUpdateManager')) {
+      // 微信版本正常
+      console.log(new Date())
+      // 创建版本对象
+      const updateManager = wx.getUpdateManager()
+      // 1. 检查小程序是否有新版本发布
+      updateManager.onCheckForUpdate(res => {
+        console.log(res, '检测版本') // res.hasUpdate=false,代表没有新版本
+
+        if (res.hasUpdate) {
+          // 2. 小程序有新版本，则静默下载新版本，做好更新准备 监听小程序有版本更新事件。客户端主动触发下载（无需开发者触发）
+          updateManager.onUpdateReady(async res => {
+            console.log(new Date())
+            wx.showModal({
+              title: '更新提示',
+              content: '新版本已经准备好，是否重启应用？',
+              success(res) {
+                if (res.confirm) {
+                  console.log('用户同意下载更新')
+                  // 3. 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                  updateManager.applyUpdate()
+                } else if (res.cancel) {
+                  console.log('用户点击取消')
+                  // 如果需要强制更新，则给出二次弹窗，如果不需要，则这里的代码都可以删掉了
+                  wx.showModal({
+                    title: '温馨提示~',
+                    content:
+                      '本次版本更新涉及到新的功能添加，旧版本无法正常访问的哦~',
+                    success() {
+                      console.log('再次弹框更新')
+                      // 再次执行更新检测
+                      self.autoUpdate()
+                      // return
+                      // 第二次提示后，强制更新
+                      // if (res.confirm) {
+                      //   // 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
+                      //   updateManager.applyUpdate()
+                      // } else if (res.cancel) {
+                      //   //重新回到版本更新提示
+                      //   self.autoUpdate()
+                      // }
+                    }
+                  })
+                }
+              }
+            })
+          })
+        }
+      })
+    }
+  }
+
   // 查询登录状态是否过期
   async checkLogin() {
     let datames = wx.getStorageSync('datames')
@@ -211,9 +295,13 @@ export default class extends wepy.app {
   async getcounon(types) {
     // 发请求
     let params = {
-      eid: this.globalData.vipInfo.eid,
-      vipid: this.globalData.vipInfo.vid,
-      ctype: types
+     limit: 20,
+            offset: 0,
+            p: {
+                eid: this.globalData.vipInfo.eid,
+                vipid: this.globalData.vipInfo.vid,
+                ctype: types
+            },
     }
     console.log(params, 99)
     const { data: res } = await wepy.post('/coupon/getmycoupon', params)
@@ -225,7 +313,7 @@ export default class extends wepy.app {
     if (res.rows) {
       this.globalData.mycoupon = res.rows
     }
-    return { statu: true, mes: '获取优惠券成功' }
+    return { statu: true, mes: '获取优惠券成功',total:res.total }
     // 获取到结果回调函数
   }
   // 判断授权状态,有就直接赋值，没有就手动点击授权并获取赋值
@@ -265,19 +353,19 @@ export default class extends wepy.app {
     return res
   }
 
-  async getVipInfo2(datames, userInfo) {
+  async getVipInfo2() {
     let parent = {
       eid: this.globalData.eid,
-      usOpenid: datames.openid,
+      usOpenid: this.globalData.datames.openid,
       // usUnionid: datames.unionid?datames.unionid:datames.openid,
-      usUnionid: datames.unionid,
-      usNickname: userInfo.nickName,
-      usSex: userInfo.gender,
-      usLanguage: userInfo.language,
-      usCity: userInfo.city,
-      usProvince: userInfo.province,
-      usCountry: userInfo.country,
-      usHeadimgurl: userInfo.avatarUrl,
+      usUnionid: this.globalData.datames.unionid,
+      usNickname: this.globalData.userInfo.nickName,
+      usSex: this.globalData.userInfo.gender,
+      usLanguage: this.globalData.userInfo.language,
+      usCity: this.globalData.userInfo.city,
+      usProvince: this.globalData.userInfo.province,
+      usCountry: this.globalData.userInfo.country,
+      usHeadimgurl: this.globalData.userInfo.avatarUrl,
       usSubscribeTime: Date.parse(new Date()) / 1000
     }
     console.log(parent, '用户信息')

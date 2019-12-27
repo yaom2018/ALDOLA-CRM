@@ -4,6 +4,8 @@ var QQMapWX = require('../tool/qqmap-wx-jssdk.js')
 var qqmapsdk
 export default class Home extends wepy.mixin {
   data = {
+    // 版本号
+    versionNum: '1.2.3',
     login: false,
     showcheckuser: true,
     showcheckphone: true,
@@ -17,7 +19,7 @@ export default class Home extends wepy.mixin {
     ConfirmButton: false, //弹框确定按钮
     getCouponarr: [],
     // 当前等级所需积分
-    gradepoint: 2000,
+    gradepoint: 0,
     // 注册渠道编号
     registnum: '',
     // marginHeight: 0,
@@ -27,7 +29,11 @@ export default class Home extends wepy.mixin {
       right: ''
     },
     // 活动数据
-    activity: [1,2],
+    activity: [{
+      src: 'http://img.pengwang.xyz/image/aldolabanner1.png'
+    }, {
+      src: 'http://img.pengwang.xyz/image/aldolabanner2.png'
+    }],
     tab_active_color: 'border-bottom: 4rpx solid #4b4849',
     tab_color: 'border-bottom: 4rpx solid #f4f4f4',
     // 我的定位
@@ -36,70 +42,83 @@ export default class Home extends wepy.mixin {
     latitude: '',
     longitude: ''
   }
+  onReady() {
+    // wx.showShareMenu({
+    //   withShareTicket: true
+    // })
+  }
   async onShow() {
     this.getSetting()
-    if(!this.$parent.globalData.vipInfo){
+    if (!this.$parent.globalData.vipInfo) {
       console.log('未登陆')
       return
+    } else {
+      console.log('已登录')
+      // 获取会员信息
+      
+      let getparamres = await this.$parent.getVipInfo2()
+      console.log(getparamres, '会员信息')
+      // 赋值
+      this.$parent.globalData.vipInfo = getparamres.t
+      this.vipInfo = getparamres.t
+      // 获取表单信息
+      this.get_usermessage()
+
+      this.$apply()
+      // 成长值===================================
+      this.getPonitMax()
+      this.$apply()
     }
-    console.log('已登录')
-    // 获取活动优惠券
-    this.loadCoupons(this)
-    this.get_usermessage()
-    }
+
+  }
 
 
   onHide() {
     console.log('离开')
-    this.showgift=false
+    this.showgift = false
+    this.$apply()
   }
   async onLoad(options) {
     // 登录wx
     let loginRes = await wepy.login().catch(err => err)
-    console.log(loginRes,'wxlogin')
+    console.log(loginRes, 'wxlogin')
     this.$parent.globalData.code = loginRes.code
-    console.log(this.$parent.globalData.code,'code')
-    
+    console.log(this.$parent.globalData.code, 'code')
+    // 缓存中获取数据
+    var datames = wx.getStorageSync('datames')
+    // 积分余额变更后查询更新
+    this.$parent.globalData.datames=datames
     // 定位
     qqmapsdk = new QQMapWX({
       key: '2CDBZ-GYICP-J65D4-LCXU2-IU3NJ-2QBXW' //这里使用的是自己的秘钥
-  })
-  // this.getActivities()
+    })
+    // this.getActivities()
 
-    const res=await this.$parent.getSettingStatus('scope.userInfo')
-    console.log(res,1111);
-    if(res.statu===true){
+    const res = await this.$parent.getSettingStatus('scope.userInfo')
+    console.log(res, 1111)
+    if (res.statu === true) {
       // 已授权
-      this.showcheckuser=false
+      this.showcheckuser = false
       this.$apply()
     }
 
     // tab样式
-    this.tab_style={
-      left: this.tab_active_color,
-      right: this.tab_color
-    },
-    // 登录
-    this.getLoginstatu()
-    
-    // // 动态修改我的福利图标的位置
-    // const res = wx.getSystemInfoSync()
-    // // console.log(res.windowHeight)
-    // wx.createSelectorQuery().select('.weal_bd').boundingClientRect(rect=>{
-    //   // console.log(rect)
-    // this.marginHeight=100-(res.windowHeight-rect.bottom)
-    // // console.log(this.marginHeight);
-    //   this.$apply()
-    //   }).exec()
-      // 动态设置下拉字体
-      wx.setBackgroundTextStyle({
-        textStyle: 'dark' // 下拉背景字体、loading 图的样式为dark
-      })
-      wx.setBackgroundColor({
-        backgroundColor: '#40444d', // 窗口的背景色为
-        backgroundColorBottom: '#f4f4f4', // 底部窗口的背景色为白色
-      })
-	
+    this.tab_style = {
+        left: this.tab_active_color,
+        right: this.tab_color
+      },
+      // 登录
+      this.getLoginstatu()
+
+    // 动态设置下拉字体
+    wx.setBackgroundTextStyle({
+      textStyle: 'dark' // 下拉背景字体、loading 图的样式为dark
+    })
+    wx.setBackgroundColor({
+      backgroundColor: '#40444d', // 窗口的背景色为
+      backgroundColorBottom: '#f4f4f4', // 底部窗口的背景色为白色
+    })
+
   }
   // 下拉刷新
   onPullDownRefresh() {
@@ -111,69 +130,64 @@ export default class Home extends wepy.mixin {
     console.log(statures, '登录状态')
     // statures.loginstatu=1/0,没有登录过或者过期
     if (statures.loginstatu !== true) {
-      
+
       // 判断是否已授权用户信息
       const statures = await this.$parent.getSettingStatus('scope.userInfo')
       console.log(statures, '授权状态')
       // 没有授权过，需要点击授权
-      if(statures.statu===1){
+      if (statures.statu === 1) {
         console.log('点击授权用户信息');
         wepy.Toast('点击授权用户信息', 'none')
         return
       }
       // 拒绝授权过，需要点击授权
-      if(statures.statu===2){
+      if (statures.statu === 2) {
         console.log('点击授权用户信息')
         wepy.Toast('点击授权用户信息', 'none')
         return
       }
       // 授权过
       const userinfoRes = await wepy.getUserInfo().catch(err => err)
-      console.log(userinfoRes,'获取用户信息');
+      console.log(userinfoRes, '获取用户信息');
       this.$parent.globalData.userInfo = userinfoRes.userInfo
       this.userInfo = userinfoRes.userInfo
       this.showcheckuser = false
       this.showcheckphone = true
-      
       this.$apply()
       return
     }
-    
-
-    // this.$parent.globalData.vipInfo=vip
-    // this.vipInfo=vip
     // 授权过
     // 判断是否已授权用户信息
     const settingstatures = await this.$parent.getSettingStatus('scope.userInfo')
     console.log(settingstatures, '授权状态')
     // 没有授权过，需要点击授权
-    if(settingstatures.statu===1){
+    if (settingstatures.statu === 1) {
       console.log('点击授权用户信息');
       wepy.Toast('点击授权用户信息', 'none')
       return
     }
     // 拒绝授权过，需要点击授权
-    if(settingstatures.statu===2){
+    if (settingstatures.statu === 2) {
       console.log('点击授权用户信息')
       wepy.Toast('点击授权用户信息', 'none')
       return
     }
     // 授权过用户信息
     const userinfoRes = await wepy.getUserInfo().catch(err => err)
-    console.log(userinfoRes,'获取用户信息');
+    console.log(userinfoRes, '获取用户信息');
     this.$parent.globalData.userInfo = userinfoRes.userInfo
     this.userInfo = userinfoRes.userInfo
 
     // 缓存中获取数据
     var datames = wx.getStorageSync('datames')
-    console.log(datames,'老用户登录');
-    
+    console.log(datames, '老用户登录')
+    this.$parent.globalData.datames=datames
     // 请求服务器获取vipinfo
     // 发起老用户登录
-    let getparamres=await this.$parent.getVipInfo2(datames,this.userInfo)
-    console.log(getparamres,'老用户登录结果')
+    let getparamres = await this.$parent.getVipInfo2()
+    console.log(getparamres, '老用户登录结果')
     // 如果失败了
-    if(!getparamres.statu){
+    if (!getparamres.statu) {
       console.log(222);
       // that.cbparams(that)
       // return
@@ -181,167 +195,177 @@ export default class Home extends wepy.mixin {
       return
     }
     // 赋值
-    this.$parent.globalData.vipInfo=getparamres.t
-    this.vipInfo=getparamres.t
+    this.$parent.globalData.vipInfo = getparamres.t
+    this.vipInfo = getparamres.t
+    this.$apply()
+    // 成长值===================================
+    this.getPonitMax()
 
-
-    this.login=true
+    this.login = true
     this.showcheckuser = false
     this.showcheckphone = false
     this.$apply()
-  // 获取活动优惠券和用户基本信息
-  this.loadCoupons(this)
-  this.get_usermessage()
+    // 获取活动优惠券和用户基本信息
+    // this.loadCoupons(this)
+    this.get_usermessage()
     this.$apply()
     // console.log('不是首次登录')
   }
-  // 获取全局会员信息
-  async get_usermessage(){
-    
-    // this.userInfo=this.$parent.globalData.userInfo
-    // this.vipInfo=this.$parent.globalData.vipInfo
-    // 获取自定义表单及会员表单信息
-    const res=await this.$parent.getvipmessage()
-    console.log(res,'会员表单信息')
-    if(!res.statu){
+  // 获取全局自定义表单信息
+  async get_usermessage() {
+    const res = await this.$parent.getvipmessage()
+    console.log(res, '会员表单信息')
+    if (!res.statu) {
       console.log(res.mes);
       return
     }
-    this.vipmessage=res.res.vinfo
-    // this.login=true
+    this.vipmessage = res.res.vinfo
     this.$apply()
   }
-   // 获取活动优惠券
-   async loadCoupons(_this,flag) {
-    
-    let params = {
-        eid: this.$parent.globalData.vipInfo.eid,
-        vipid: this.$parent.globalData.vipInfo.vid
-    }
-    console.log(params);
-    const res = await wepy.post('/coupon/getecoupons', params)
-    console.log(res.data, 666666666);
-    let data = res.data
-    // console.log(data.statu, 9);
-    if (data.statu) {
-        this.allCoupons = data.rows
-        this.$apply()
-    }else {
-      this.allCoupons = []
-        this.$apply()
-    }
-    if(flag){
-      wepy.Toast('领取成功','success')
-    }
-  }
+  // 获取活动优惠券
+  //  async loadCoupons(_this,flag) {
+
+  //   let params = {
+  //       eid: this.$parent.globalData.vipInfo.eid,
+  //       vipid: this.$parent.globalData.vipInfo.vid
+  //   }
+  //   console.log(params);
+  //   const res = await wepy.post('/coupon/getecoupons', params)
+  //   console.log(res.data, 666666666);
+  //   let data = res.data
+  //   // console.log(data.statu, 9);
+  //   if (data.statu) {
+  //       this.allCoupons = data.rows
+  //       this.$apply()
+  //   }else {
+  //     this.allCoupons = []
+  //       this.$apply()
+  //   }
+  //   if(flag){
+  //     wepy.Toast('领取成功','success')
+  //   }
+  // }
 
   // 鉴权定位
   getSetting() {
 
     wx.getSetting({
-        success: (res) => {
-            console.log(JSON.stringify(res), 888)
-            // res.authSetting['scope.userLocation'] == undefined    表示 初始化进入该页面
-            // res.authSetting['scope.userLocation'] == false    表示 非初始化进入该页面,且未授权
-            // res.authSetting['scope.userLocation'] == true    表示 地理位置授权
-            if (res.authSetting['scope.userLocation'] != undefined && res.authSetting['scope.userLocation'] != true) {
-                wx.showModal({
-                    title: '请求授权当前位置',
-                    content: '需要获取您的地理位置，请确认授权',
-                    success: function (res) {
-                        if (res.cancel) {
-                            wx.showToast({
-                                title: '拒绝授权',
-                                icon: 'none',
-                                duration: 1000
-                            })
-                        } else if (res.confirm) {
-                            wx.openSetting({
-                                success: function (dataAu) {
-                                    if (dataAu.authSetting["scope.userLocation"] == true) {
-                                        wx.showToast({
-                                            title: '授权成功',
-                                            icon: 'success',
-                                            duration: 1000
-                                        })
-                                        //再次授权，调用wx.getLocation的API
-                                        this.getLocation()
-                                    } else {
-                                        wx.showToast({
-                                            title: '授权失败',
-                                            icon: 'none',
-                                            duration: 1000
-                                        })
-                                    }
-                                }
-                            })
-                        }
-                    }
+      success: (res) => {
+        console.log(JSON.stringify(res), 888)
+        // res.authSetting['scope.userLocation'] == undefined    表示 初始化进入该页面
+        // res.authSetting['scope.userLocation'] == false    表示 非初始化进入该页面,且未授权
+        // res.authSetting['scope.userLocation'] == true    表示 地理位置授权
+        if (res.authSetting['scope.userLocation'] != undefined && res.authSetting['scope.userLocation'] != true) {
+          wx.showModal({
+            title: '请求授权当前位置',
+            content: '需要获取您的地理位置，请确认授权',
+            success: function (res) {
+              if (res.cancel) {
+                wx.showToast({
+                  title: '拒绝授权',
+                  icon: 'none',
+                  duration: 1000
                 })
-            } else if (res.authSetting['scope.userLocation'] == undefined) {
-                //调用wx.getLocation的API
-                console.log('没有权限');
-                // wx.authorize({
-                //     scope: 'scope.userLocation',
-                //     success(){
-                //         console.log(222222);
+              } else if (res.confirm) {
+                wx.openSetting({
+                  success: function (dataAu) {
+                    if (dataAu.authSetting["scope.userLocation"] == true) {
+                      wx.showToast({
+                        title: '授权成功',
+                        icon: 'success',
+                        duration: 1000
+                      })
+                      //再次授权，调用wx.getLocation的API
+                      this.getLocation()
+                    } else {
+                      wx.showToast({
+                        title: '授权失败',
+                        icon: 'none',
+                        duration: 1000
+                      })
+                    }
+                  }
+                })
+              }
+            }
+          })
+        } else if (res.authSetting['scope.userLocation'] == undefined) {
+          //调用wx.getLocation的API
+          console.log('没有权限');
+          // wx.authorize({
+          //     scope: 'scope.userLocation',
+          //     success(){
+          //         console.log(222222);
 
-                //     }
-                // })
-                this.getLocation()
-            }
-            else {
-                //   有权限
-                console.log('有权限');
-                //调用wx.getLocation的API
-                this.getLocation()
-            }
+          //     }
+          // })
+          this.getLocation()
+        } else {
+          //   有权限
+          console.log('有权限');
+          //调用wx.getLocation的API
+          this.getLocation()
         }
+      }
     })
-}
-// 获取经纬度
-getLocation() {
+  }
+  // 获取经纬度
+  getLocation() {
     let vm = this
     wx.getLocation({
-        type: 'wgs84',
-        success: res => {
-            console.log(res);
-            let latitude = res.latitude
-            let longitude = res.longitude
-            let speed = res.speed
-            let accuracy = res.accuracy
-            vm.getLocal(latitude, longitude)
-        },
-        fail: res => {
-            console.log('fail' + JSON.stringify(res));
+      type: 'wgs84',
+      success: res => {
+        console.log(res);
+        let latitude = res.latitude
+        let longitude = res.longitude
+        let speed = res.speed
+        let accuracy = res.accuracy
+        vm.getLocal(latitude, longitude)
+      },
+      fail: res => {
+        console.log('fail' + JSON.stringify(res));
 
-        }
+      }
     })
-}
-// 获取当前地理位置
-getLocal(latitude, longitude) {
+  }
+  // 获取成长值上限
+  getPonitMax(){
+    // 成长值===================================
+    if (this.vipInfo.qpname == '注册会员') {
+      this.gradepoint = 1
+    } else if (this.vipInfo.qpname == '普卡会员') {
+      this.gradepoint = 600
+    } else if (this.vipInfo.qpname == '准金卡会员') {
+      this.gradepoint = 1000
+    } else if (this.vipInfo.qpname == '金卡会员'){
+      this.gradepoint = 99999
+    }
+    this.$apply()
+  }
+  // 获取当前地理位置
+  getLocal(latitude, longitude) {
     let vm = this;
     qqmapsdk.reverseGeocoder({
-        location: {
-            latitude: latitude,
-            longitude: longitude
-        },
-        success: res => {
-            console.log(res.result.address,99);
-            vm.address = res.result.address
-            this.latitude=latitude
-            this.longitude=longitude
-            this.$apply()
+      location: {
+        latitude: latitude,
+        longitude: longitude
+      },
+      success: res => {
+        console.log(res.result.address, 99);
+        vm.address = res.result.address
+        this.latitude = latitude
+        this.longitude = longitude
+        this.$apply()
 
-        },
-        fail: function (res) {
-            console.log(res);
-        },
-        complete: function (res) {
-            // console.log(res);
-        }
+      },
+      fail: function (res) {
+        console.log(res);
+      },
+      complete: function (res) {
+        // console.log(res);
+      }
     })
-}
+  }
   methods = {
     // 点击获取用户信息
     async getUserInfo(e) {
@@ -361,15 +385,15 @@ getLocal(latitude, longitude) {
     },
     // 点击获取手机号，并登录/注册
     async getPhoneNumber(e) {
-      let that=this
+      let that = this
       console.log(e)
       if (e.detail.errMsg !== "getPhoneNumber:ok") return wepy.Toast('取消了手机授权', 'none')
       // this.userparams=e.detail
       // 发起注册登录
-      let getparamres=await this.$parent.getparam(e.detail,this.userInfo)
-      console.log(getparamres,'getparam')
+      let getparamres = await this.$parent.getparam(e.detail, this.userInfo)
+      console.log(getparamres, 'getparam')
       // 如果失败了
-      if(!getparamres.statu){
+      if (!getparamres.statu) {
         console.log(222);
         // that.cbparams(that)
         // return
@@ -377,29 +401,31 @@ getLocal(latitude, longitude) {
         return
       }
       // 赋值
-      this.$parent.globalData.vipInfo=getparamres.t
-      this.vipInfo=getparamres.t
+      this.$parent.globalData.vipInfo = getparamres.t
+      this.vipInfo = getparamres.t
       // this.$apply()
-      if(getparamres.t.rescode===0){
+      if (getparamres.t.rescode === 0) {
         console.log('已注册')
-        this.login=true
-		    this.showcheckuser=false
-        this.showcheckphone=false
+        this.getPonitMax()
+        this.login = true
+        this.showcheckuser = false
+        this.showcheckphone = false
         this.$apply()
         wepy.baseToast('登录成功')
-        
+
       }
-      if(getparamres.t.rescode===null){
+      if (getparamres.t.rescode === null) {
         console.log('未注册')
         wepy.baseToast('注册成功')
         // 弹礼包框------------------
+        this.getPonitMax()
         this.showgift = true
-        this.login=true
-		    this.showcheckuser=false
-        this.showcheckphone=false
+        this.login = true
+        this.showcheckuser = false
+        this.showcheckphone = false
         this.$apply()
       }
-      let datames={
+      let datames = {
         openid: getparamres.t.wxid,
         unionid: getparamres.t.unionid,
         // userInfo: this.userInfo
@@ -407,61 +433,61 @@ getLocal(latitude, longitude) {
       // 存入本地缓存---------------------------
       wx.setStorageSync('datames', datames)
       // 获取卡券
-      this.$parent.globalData.openid=getparamres.t.wxid
-      this.$parent.globalData.unionid=getparamres.t.unionid
+      this.$parent.globalData.openid = getparamres.t.wxid
+      this.$parent.globalData.unionid = getparamres.t.unionid
 
-		  // 获取活动优惠券
-      this.loadCoupons(this,false)
+      // 获取活动优惠券
+      // this.loadCoupons(this, false)
       this.get_usermessage()
       this.$apply()
     },
     // tab栏切换
-    switch_acticity(id){
+    switch_acticity(id) {
       console.log(id)
-      if(id==0){
-        this.tab_style={
+      if (id == 0) {
+        this.tab_style = {
           left: this.tab_active_color,
           right: this.tab_color
         }
-        
+
       }
-      if(id==1){
-        this.tab_style={
+      if (id == 1) {
+        this.tab_style = {
           left: this.tab_color,
           right: this.tab_active_color
         }
-        
+
       }
     },
-   // 点击重新获取地址
-   tapgetLocation() {
-    wepy.Toast('重新获取地址中')
-    let vm=this
-    wx.getSetting({
+    // 点击重新获取地址
+    tapgetLocation() {
+      wepy.Toast('重新获取地址中')
+      let vm = this
+      wx.getSetting({
         success: res => {
-            console.log(res, 777)
-            if(res.authSetting['scope.userLocation']){
-              vm.getLocation()
-              return
+          console.log(res, 777)
+          if (res.authSetting['scope.userLocation']) {
+            vm.getLocation()
+            return
+          }
+          wx.openSetting({
+            success(res) {
+              console.log('授权成功')
+              if (res.authSetting['scope.userLocation']) {
+                vm.getLocation()
+              }
             }
-            wx.openSetting({
-                success(res) {
-                    console.log('授权成功')
-                    if (res.authSetting['scope.userLocation']) {
-                        vm.getLocation()
-                    }
-                }
-            })
+          })
         }
-    })
-  },
-  // 服务权益------start---------------------------
+      })
+    },
+    // 服务权益------start---------------------------
     // vip绑定
-    to_vipBd(){
+    to_vipBd() {
       wx.navigateTo({
         url: '/packageA/pages/view/vip_bind'
       })
-      
+
     },
     // 查看会员权益
     to_memberDes() {
@@ -490,27 +516,33 @@ getLocal(latitude, longitude) {
     },
     // 完善信息
     to_toInformation() {
-      if(!this.login){
+      if (!this.login) {
         wepy.Toast('请授权登录')
         return
       }
-        wepy.navigateTo({
-          url: '/pages/other/information'
-        })
-      },
+      wepy.navigateTo({
+        url: '/pages/other/information'
+      })
+    },
     // 申诉
-    to_appeal(){
+    to_appeal() {
       wx.navigateTo({
         url: '/packageA/pages/view/vip_appeal'
       })
     },
-// 服务权益------end---------------------------
+    // 积分升级
+    to_jifenlevel(){
+      wx.navigateTo({
+        url: '/packageA/pages/view/jifen_level'
+      })
+    },
+    // 服务权益------end---------------------------
     // 卡券
     toCoupon() {
-		if(!this.login){
-			wepy.Toast('请授权登录')
-			return
-		}
+      if (!this.login) {
+        wepy.Toast('请授权登录')
+        return
+      }
       wx.navigateTo({
         url: '/pages/other/mycounon'
       })
@@ -518,60 +550,86 @@ getLocal(latitude, longitude) {
       // url: '/pages/tabs/coupon'
       // })
     },
-    
+
     // 前往领券中心
-    to_compon(){
+    to_compon() {
       wx.switchTab({
         url: '/pages/tabs/coupon'
       })
     },
-    
+
     // 关闭弹框
     closegift() {
       this.showgift = false
     },
     // 前往会员详情
     toMydetail() {
-		if(!this.login){
-			wepy.Toast('请授权登录')
-			return
-		}
+      if (!this.login) {
+        wepy.Toast('请授权登录')
+        return
+      }
       wx.navigateTo({
         url: '/pages/other/mydetail'
       })
     },
     // 前往积分明细
-    toIntegral(){
-      if(!this.login){
+    toIntegral() {
+      if (!this.login) {
         wepy.Toast('请授权登录')
         return
       }
-        wx.navigateTo({
-          url: '/pages/other/integral'
-        })
+      wx.navigateTo({
+        url: '/pages/other/integral'
+      })
     },
-    // 领取优惠券
-    async getEcoupon(e) {
-      var _this = this;
-      wepy.Toast('正在领取')
-      let params = {
-              mid: e.currentTarget.id,
-              eid: this.$parent.globalData.vipInfo.eid,
-              vipid: this.$parent.globalData.vipInfo.vid
+    // 营销活动栏--前往明佑优品小程序
+    to_myyp(e) {
+      let id = e.currentTarget.dataset.id
+      if (id == 1) {
+        wx.navigateToMiniProgram({
+          appId: 'wxea706202be89c22b',
+          path: 'pages/common/blank-page/index?weappSharePath=pages%2Fhome%2Fdashboard%2Findex%3Fkdt_id%3D41580462',
+          // extraData: {
+          //   foo: 'bar'
+          // },
+          // envVersion: 'develop',
+          success(res) {
+            // 打开成功
+            console.log('success');
+
+          },
+          fail(res) {
+            console.log('fail');
+          }
+        })
       }
-      const { data: res } = await wepy.post('/coupon/getcoupon', params)
-      
-      console.log(res,'领取优惠券')
-      if(!res.statu) return wepy.Toast(res.mes)
-      this.loadCoupons(_this,true)
-  },
+
+    },
     
+    // 领取优惠券
+    // async getEcoupon(e) {
+    //   var _this = this;
+    //   wepy.Toast('正在领取')
+    //   let params = {
+    //     mid: e.currentTarget.id,
+    //     eid: this.$parent.globalData.vipInfo.eid,
+    //     vipid: this.$parent.globalData.vipInfo.vid
+    //   }
+    //   const {
+    //     data: res
+    //   } = await wepy.post('/coupon/getcoupon', params)
+
+    //   console.log(res, '领取优惠券')
+    //   if (!res.statu) return wepy.Toast(res.mes)
+    //   this.loadCoupons(_this, true)
+    // },
+
     // 前往优惠券
     toCounon() {
-		if(!this.login){
-			wepy.Toast('请授权登录')
-			return
-		}
+      if (!this.login) {
+        wepy.Toast('请授权登录')
+        return
+      }
       wx.navigateTo({
         url: '/pages/other/mycounon'
       })

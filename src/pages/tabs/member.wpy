@@ -8,13 +8,13 @@
 						<span>{{address?address:'请选择位置'}}</span>
 						<van-icon name="arrow-down" />
 					</view>
-					<view class="right">
+					<!-- <view class="right">
 						<van-icon name="search" />
-					</view>
+					</view> -->
 				</view>
-				<view class="search">
+				<!-- <view class="search">
 					<input placeholder="查询门店地址" value="" />
-				</view>
+				</view> -->
 				<view class="new">
 					<van-icon name="volume-o"  />
 					<van-notice-bar
@@ -42,12 +42,12 @@
 								<span>{{vipInfo.qpname?vipInfo.qpname:'***'}}</span>
 							</view>
 							<view class="progress">
-								<van-progress percentage="{{vipInfo.actualpoint/gradepoint*100?vipInfo.actualpoint/gradepoint*100:50}}"  custom-class
+								<van-progress percentage="{{vipInfo.gradepoint/gradepoint*100?vipInfo.gradepoint/gradepoint*100:0}}"  custom-class
 								color="#fff"
 								stroke-width="10"
 								show-pivot="{{false}}" />
 								<view class="level_num">
-									<span>{{vipInfo.actualpoint?vipInfo.actualpoint:0}}/2000</span>
+									<span>成长值  {{vipInfo.gradepoint?vipInfo.gradepoint:0}}/{{gradepoint}}</span>
 									<span>升级</span>
 								</view>
 							</view>
@@ -113,18 +113,17 @@
 							<image class="v-logo" style="width: 60rpx; height: 40rpx;" src="../../assets/images/serve_mes.png">
 							<span>完善信息</span>
 						</view>
-						
 						<!-- 申诉通道 -->
 						<view class="serve_item" @tap="to_appeal">
 							<image class="v-logo" style="width: 60rpx; height: 40rpx;" src="../../assets/images/serve_yj.png">
 							<span >申诉通道</span>
 						</view>
-						<!-- ---------------------待定--------------------- -->
-						<!-- 礼券转赠 -->
-						<view class="serve_item">
-							<image class="v-logo" style="width: 60rpx; height: 40rpx;" src="../../assets/images/serve_coupon.png">
-							<span class="daiding">礼券转赠</span>
+						<!-- 积分升级 -->
+						<view class="serve_item" @tap="to_jifenlevel">
+							<image class="v-logo" style="width: 60rpx; height: 40rpx;" src="../../assets/images/jifen_level.png">
+							<span >积分升级</span>
 						</view>
+						<!-- ---------------------待定--------------------- -->
 						<!-- 积分商城 -->
 						<view class="serve_item">
 							<image class="v-logo" style="width: 60rpx; height: 40rpx;" src="../../assets/images/serve_jf.png">
@@ -147,12 +146,13 @@
 				<view class="tab_right" style="{{tab_style.right}}" @tap="switch_acticity(1)">区域活动</view>
 			</view>
 			<view class="activity">
-				<view class="item" wx:for="{{activity}}" wx:for-index="inx" wx:key="inx">
+				<view class="item" wx:for="{{activity}}" wx:for-index="inx" wx:key="inx" data-id="{{inx}}" @tap="to_myyp">
+					<image class="v-logo" style="width: 100%; height: 100%;" src="{{item.src}}">
 				</view>
 			</view>
 			<view class="message">
 				<view class="txt">最终解释权归雅黛丽所有@ALDOLA</view>
-				<view class="txt">雅黛丽VIP版本号：1.21</view>
+				<view class="txt">雅黛丽VIP版本号：{{versionNum}}</view>
 			</view>
 		</view>
         
@@ -290,7 +290,7 @@ page {
       padding: 0 50rpx;
       padding-top: 20rpx;
       width: 100%;
-      height: 280rpx;
+      height: 200rpx;
       background-color: #40444d;
       .address {
 		  width: 100%;
@@ -400,7 +400,7 @@ page {
 	  padding: 30rpx;
       overflow: hidden;
       position: absolute;
-      top: 250rpx;
+      top: 168rpx;
       left: 50%;
       transform: translateX(-50%);
       width: 685rpx;
@@ -428,6 +428,7 @@ page {
 			  display: flex;
 			  justify-content: center;
 			  flex-direction: column;
+			  z-index: 99;
 			  .message_top {
 				  font-size: 28rpx;
 				  color: #333;
@@ -465,7 +466,7 @@ page {
 					  justify-content: center;
 					  align-items: center;
 					  margin-left: 10rpx;
-					  width: 140rpx;
+					  width: 220rpx;
 					  van-progress {
 						  width: 100%;
 					  }
@@ -626,14 +627,16 @@ page {
 				justify-content: space-between;
 				// align-items: space-between;
 				align-content: flex-start;
+				align-items: flex-start;
+				// align-content: flex-start;
 				flex-wrap: wrap;
 				.serve_item {
-					width: 96rpx;
+					width: 135rpx;
 					height: 85rpx;
-					margin-right: 70rpx;
+					// margin-right: 70rpx;
 					display: flex;
 					flex-direction: column;
-					justify-content: center;
+					justify-content: flex-start;
 					align-items: center;
 					// margin-right: 60rpx;
 					margin-bottom: 40rpx;
@@ -645,7 +648,7 @@ page {
 						margin-bottom: 10rpx;
 					}
 					span {
-						font-size: 25rpx;
+						font-size: 23rpx;
 						font-weight: 540;
 						color: #333;
 					}
@@ -805,6 +808,7 @@ page {
 
 
 	.activity {
+		
 		.item {
 			width: 100%;
 			height: 200rpx;
@@ -812,6 +816,7 @@ page {
 			border-radius: 10rpx;
 			box-shadow: 0.5rpx 2rpx 2rpx #aaa;
 			background-color: #fff;
+			overflow: hidden;
 		}
 	}
 	.message {

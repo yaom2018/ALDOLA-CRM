@@ -18,7 +18,9 @@ export default class Home extends wepy.mixin {
       console.log(res.mes)
       return 
     }
-    this.uncouponnum=this.$parent.globalData.mycoupon.length
+    console.log(res,6666);
+    
+    this.uncouponnum=res.total
     this.$apply()
   }
   onLoad() {

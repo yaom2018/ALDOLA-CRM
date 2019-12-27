@@ -41,6 +41,8 @@ async getjifen(){
     let params={
         limit: this.limit,
         offset: this.offset,
+        order: 'desc',
+        sort: 'createtime',
       p: {
         vipid: this.$parent.globalData.vipInfo.vid,
         // vipid: '530098411160990',

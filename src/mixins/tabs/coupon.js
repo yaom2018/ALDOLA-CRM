@@ -2,49 +2,61 @@ import wepy from 'wepy'
 export default class Home extends wepy.mixin {
     data = {
         nocoupon: 'block',
-        coupons: ''
+        coupons: '',
+        limit: 20,
+        offset: 0,
+        // 是否显示
+        isLoading: false
     }
     // 页面切换显示
     onShow() {
         this.loadCoupons(this,false)
-        // 如果没有登录就强制跳转
-        // if (!this.$parent.globalData.logincheck) {
-        //     wepy.navigateTo({
-        //         url: '/pages/other/login'
-        //     })
-        //     return 
-        // }
+        
     }
     // 页面加载
     onLoad() {
-        // if(this.$parent.globalData.logincheck){
-             
-        //     console.log('cate页加载');
-        // }
+        
         
     }
-
+    // // 上拉加载事件
+    // onReachBottom() {
+    //     console.log('上拉加载');
+    //     this.offset=this.limit+this.offset
+    //     if(this.offset>this.total){
+    //         console.log('到底了')
+    //         this.isLoading=true
+    //         this.$apply()
+    //         return
+    //     }
+    //     this.loadCoupons(this,false)
+    // }
     async loadCoupons(_this,flag) {
+        console.log(this.$parent.globalData);
+        
         if(!this.$parent.globalData.vipInfo){
             wepy.Toast('请登录')
             return
         }
         let params = {
-            eid: this.$parent.globalData.vipInfo.eid,
-            vipid: this.$parent.globalData.vipInfo.vid
+            limit: this.limit,
+            offset: this.offset,
+            p: {
+                eid: this.$parent.globalData.vipInfo.eid,
+                wxid: this.$parent.globalData.datames.openid,
+                vipid: this.$parent.globalData.vipInfo.vid
+            }
+            
         }
-        console.log(params);
-        const res = await wepy.post('/coupon/getecoupons', params)
-        console.log(res.data, 666666666);
-        let data = res.data
+        const {data:res} = await wepy.post('/coupon/getecoupons', params)
+        console.log(res, '可用优惠券')
         // console.log(data.statu, 9);
-        if (data.statu) {
-            // console.log(1111);
-
+        if(!res) return wepy.Toast('服务器无响应')
+        if (res.statu) {
             this.nocoupon = 'none',
-                this.coupons = data.rows
+            this.coupons = res.rows
             this.$apply()
         }else {
+            wepy.Toast('暂无优惠券')
             this.coupons = []
               this.$apply()
           }

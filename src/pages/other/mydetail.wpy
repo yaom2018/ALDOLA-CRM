@@ -16,7 +16,7 @@
                 <span>优惠券</span>
             </view>
             <view class="item">
-                <span>{{vipInfo.actualmoeny}}</span>
+                <span>{{vipInfo.actualmoeny==null?0:vipInfo.actualmoeny}}</span>
                 <span>钱包·充值</span>
             </view>
             <!-- 有礼 -->

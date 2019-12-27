@@ -6,10 +6,12 @@
                 <view class="top_coupon_centent">
                     <view class="detail_text">
                         <view class="price">
-                            <span>￥</span>
+                            
                             <span>{{coupon.mmoney}}</span>
+                            <span wx:if="{{coupon.discount==1}}">折</span>
+                            <span wx:else>元</span>
                         </view>
-                        <span class="common">通用券</span>
+                        <span class="common">普通券</span>
                     </view>
                     <image
                     class="couponbgtop"
@@ -19,7 +21,7 @@
                 </view>
                 <span>{{coupon.cname}}</span>
                 <span>满{{coupon.sum}}元可用</span>
-                <span>通用券，小程序门店结算均可使用</span>
+                <span>说明：{{coupon.instructions}}</span>
                 <view class="tiaoxinma">
                     <view class="barnum">{{coupon.cid}}</view>
 			        <view class="barcode">
@@ -65,15 +67,15 @@ page {
     flex-direction: column;
     justify-content: center;
     align-items: center;
-	  margin-bottom: 20rpx;
+	//   margin-bottom: 20rpx;
 	  .barnum {
-		  font-size: 35rpx;
+		  font-size: 30rpx;
 		  text-align: center;
 		  letter-spacing:15rpx;
 		}
 		.barcode {
-			width: 350rpx;
-			height: 90rpx;
+			width: 400rpx;
+			height: 110rpx;
 			background-color: #fff;
 		}
   }
@@ -85,6 +87,7 @@ page {
       height: 150rpx;
     }
 .qrcode {
+    margin-top: 20rpx;
   width: 200rpx;
   height: 200rpx;
   background-color: #fff;
@@ -120,11 +123,11 @@ page {
                 justify-content: center;
                 align-items: center;
                 .price {
-                    span:nth-child(1) {
+                    span:nth-child(2) {
                         font-size: 20rpx;
                         color: #fff;
                     }
-                    span:nth-child(2) {
+                    span:nth-child(1) {
                         font-size: 60rpx;
                         color: #fff;
                     }
@@ -154,12 +157,17 @@ page {
             span:nth-child(3) {
                 font-size: 18rpx;
                 color: #666;
-                margin-bottom: 60rpx;
+                margin-bottom: 10rpx;
             }
             span:nth-child(4) {
+                
+                display: inline-block;
+                width: 80%;
+                height: 55rpx;
+                overflow: hidden;
                 font-size: 18rpx;
                 color: #666;
-                margin-bottom: 24rpx;
+                margin-bottom: 10rpx;
             }
         }
     }

@@ -36,13 +36,17 @@ wepy.Load = (title = '加载中',mask=true,cb=()=>{}) => {
 wepy.hLoad = () => {
     wx.hideLoading()
 }
+
+
+  
 // 请求根路径
 // get
-// const baseURL = 'https://m.ligesoft.com/wx/wxsa'
+// const baseURL = 'https://m.ligesoft.com'
 const baseURL = 'https://b2bc.ligesoft.com'
 const URL = '/wx/wxsa'
-// const baseURL = 'http://t.ligesoft.com/wx/wxsa'
-// const baseURL = 'http://192.168.10.104:9091'
+// const baseURL = 'http://t.ligesoft.com'
+// const baseURL = 'http://192.168.10.179:9091'
+// const baseURL = 'http://192.168.10.108:9091'
 wepy.get = (url, data = {}) => {
     return wepy.request({
         url: baseURL+URL + url,

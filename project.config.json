@@ -140,9 +140,17 @@
 					"scene": null
 				},
 				{
-					"id": -1,
+					"id": 13,
 					"name": "packageA/pages/view/vip_bind",
 					"pathName": "packageA/pages/view/vip_bind",
+					"query": "",
+					"scene": null
+				},
+				{
+					"id": 14,
+					"name": "pages/tabs/member",
+					"pathName": "pages/tabs/member",
+					"query": "",
 					"scene": null
 				}
 			]

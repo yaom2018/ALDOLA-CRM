@@ -36,10 +36,10 @@ export default class Home extends wepy.mixin {
     }
     async get_checkBind(){
         let params = {
-            eid: 'LS000000',
-            // eid: this.$parent.globalData.eid,
-            vid: '190000000001056'
-            // vid: this.$parent.globalData.vipInfo.vid
+            // eid: 'LS000000',
+            eid: this.$parent.globalData.eid,
+            // vid: '190000000001056'
+            vid: this.$parent.globalData.vipInfo.vid
         }
         const {data:res} = await wepy.post2('/wx/wxi/vip/getbinding', params)
         console.log(res,'检测是否绑定')
@@ -53,6 +53,7 @@ export default class Home extends wepy.mixin {
             this.shibai_bind=false
             this.success_bind=false
             this.$apply()
+            return
         }
         // 已绑定
         if(!res.statu){
@@ -62,7 +63,7 @@ export default class Home extends wepy.mixin {
             this.old_bind=true
             this.shibai_bind=false
             this.success_bind=false
-            this.card_num=res.bindingcard
+            this.card_num=res.t.bindingcard
             this.$apply()
         }
 
