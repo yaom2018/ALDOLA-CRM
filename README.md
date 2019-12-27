@@ -1,5 +1,5 @@
 ---
-typora-root-url: md_image
+
 ---
 
 # ALDOLA-CRM
@@ -10,15 +10,15 @@ typora-root-url: md_image
 
 框架：wepy(微信团队开发，开发方式同vue)
 
-![Snipaste_2019-12-27_15-36-58](/Snipaste_2019-12-27_15-36-58.png)
+![Image text](<https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image>/Snipaste_2019-12-27_15-36-58.png)
 
 <<https://wepyjs.github.io/wepy-docs/index.html>>
 
 ui-框架：vant-weapp(有赞团队基于小程序开发)
 
-![Snipaste_2019-12-27_15-35-50](/Snipaste_2019-12-27_15-35-50.png)
+![Image text](<https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image>/Snipaste_2019-12-27_15-35-50.png)
 
-![Snipaste_2019-12-27_15-36-07](/Snipaste_2019-12-27_15-36-07.png)
+![Image text](<https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image>/Snipaste_2019-12-27_15-36-07.png)
 
 <https://youzan.github.io/vant-weapp/#/intro>
 
