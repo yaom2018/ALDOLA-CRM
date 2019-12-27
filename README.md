@@ -10,15 +10,15 @@
 
 框架：wepy(微信团队开发，开发方式同vue)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image/wepy.png)
+![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/wepy.png)
 
 <<https://wepyjs.github.io/wepy-docs/index.html>>
 
 ui-框架：vant-weapp(有赞团队基于小程序开发)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image/vant.png)
+![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/vant.png)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/tree/master/md_image/vantma.png)
+![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/vantma.png)
 
 <https://youzan.github.io/vant-weapp/#/intro>
 
