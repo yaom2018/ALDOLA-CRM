@@ -14,7 +14,7 @@
 
 框架：wepy(微信团队开发，开发方式同vue)
 
-![Image text](http://img.pengwang.xyz/image/githubwepy.png)
+![Image text](http://img.pengwang.xyz/image/github/wepy.png)
 
 <<https://wepyjs.github.io/wepy-docs/index.html>>
 
@@ -22,13 +22,13 @@
 
 ##### ui-框架：vant-weapp(有赞团队基于小程序开发)
 
-![Image text](http://img.pengwang.xyz/image/githubvant.png)
+![Image text](http://img.pengwang.xyz/image/github/vant.png)
 
 ------
 
 ##### vant_weapp(小程序UI框架)-扫码体验
 
-![Image text](http://img.pengwang.xyz/image/githubvantma.png)
+![Image text](http://img.pengwang.xyz/image/github/vantma.png)
 
 <https://youzan.github.io/vant-weapp/#/intro>
 
