@@ -10,7 +10,7 @@
 
 框架：wepy(微信团队开发，开发方式同vue)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/wepy.png)
+![Image text](http://img.pengwang.xyz/image/aldolabanner1.png)
 
 <<https://wepyjs.github.io/wepy-docs/index.html>>
 
