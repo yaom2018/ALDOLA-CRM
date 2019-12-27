@@ -10,15 +10,15 @@
 
 框架：wepy(微信团队开发，开发方式同vue)
 
-![Image text](http://img.pengwang.xyz/image/aldolabanner1.png)
+![Image text](http://img.pengwang.xyz/image/githubwepy.png)
 
 <<https://wepyjs.github.io/wepy-docs/index.html>>
 
 ui-框架：vant-weapp(有赞团队基于小程序开发)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/vant.png)
+![Image text](http://img.pengwang.xyz/image/githubvant.png)
 
-![Image text](https://github.com/yanyufanchen/ALDOLA-CRM/master/md_image/vantma.png)
+![Image text](http://img.pengwang.xyz/image/githubvantma.png)
 
 <https://youzan.github.io/vant-weapp/#/intro>
 
